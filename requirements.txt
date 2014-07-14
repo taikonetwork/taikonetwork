@@ -1,0 +1,18 @@
+# PACKAGE DEPENDENCIES:
+
+# Required by psycopg2
+setuptools-git==1.0
+
+# Required by django-salesforce
+requests==2.3.0
+pytz==2014.4
+
+
+# MAIN PACKAGES:
+Django==1.6.5
+django-salesforce==0.3
+gunicorn==18.0
+psycopg2==2.5.3
+py2neo==1.6.4
+setproctitle==1.1.8
+
