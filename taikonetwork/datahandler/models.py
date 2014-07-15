@@ -180,3 +180,7 @@ class SyncInfo(django.db.models.Model):
     model_type = django.db.models.CharField(max_length=32)
     lastupdateddate = django.db.models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        update = self.lastupdateddate
+        return '[{0}] {1}'.format(self.model_type,
+                                  update.strftime('%m-%d-%Y %H:%M:%S.%f%z'))
