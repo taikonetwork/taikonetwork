@@ -99,6 +99,6 @@ STATIC_URL = '/static/'
 
 # Override sensitive settings information.
 try:
-    from local_settings import *
+    from taikonetwork.local_settings import *
 except ImportError:
     pass
