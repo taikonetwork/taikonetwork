@@ -5,8 +5,8 @@ Configurations for remote Neo4j database.
 
 """
 
-NEO4J_ROOT_URI = 'http://ec2-54-191-63-134.us-west-2.compute.amazonaws.com:7474'
-NEO4J_DB_URI = 'http://ec2-54-191-63-134.us-west-2.compute.amazonaws.com:7474/db/data/'
+NEO4J_ROOT_URI = 'http://172.31.20.206:7474'
+NEO4J_DB_URI = 'http://172.31.20.206:7474/db/data/'
 
 
 # Neo4j database models (not managed; for reference)

@@ -33,7 +33,6 @@ pip-delete-this-directory.tx
 
 # Django stuff:
 *.log
-local_settings.py
 
 # Miscellaneous directories
 bin/
@@ -48,3 +47,7 @@ static/
 
 # Virtual environment
 pyvenv.cfg
+
+# Auth stuff
+local_settings.py
+salesforce_authentication.py
