@@ -183,4 +183,4 @@ class SyncInfo(django.db.models.Model):
     def __str__(self):
         update = self.lastupdateddate
         return '[{0}] {1}'.format(self.model_type,
-                                  update.strftime('%m-%d-%Y %H:%M:%S.%f%z'))
+                                  update.strftime('%Y-%m-%d %H:%M:%S.%f%z'))
