@@ -1,9 +1,9 @@
-from django.core.management.base import BaseCommand, CommandError
-from django.utils.timezone import utc
+from django.core.management.base import BaseCommand
 from optparse import make_option
 from py2neo import cypher
-import datetime
 import time
+import sys
+import math
 
 from taikonetwork.neo4j_settings import NEO4J_ROOT_URI
 from datahandler.models import Group, Member, Membership, SyncInfo
@@ -41,8 +41,9 @@ class Command(BaseCommand):
             try:
                 # Query newly-added or recently-modified data
                 # (lastmodifieddate >= lastupdateddate)
-                groups, members, mships = query_updated_data(groupinfo.lastupdateddate,
-                            memberinfo.lastupdateddate, membershipinfo.lastupdateddate)
+                groups, members, mships = self.query_updated_data(groupinfo.lastupdateddate,
+                                                                  memberinfo.lastupdateddate,
+                                                                  membershipinfo.lastupdateddate)
 
                 num_groups = len(groups)
                 num_members = len(members)
@@ -68,7 +69,7 @@ class Command(BaseCommand):
                         memberinfo.save()
 
                 # Membership and Connection relationships dependent on nodes.
-                # Sync relationships only if Group and Member nodes updated error-free. 
+                # Sync relationships only if Group and Member nodes updated error-free.
                 rel_error = True
                 if group_sync_ok and member_sync_ok and num_mships > 0:
                     # Format Membership queryset to dictionary for easier updating
@@ -80,7 +81,7 @@ class Command(BaseCommand):
                     end = time.time()
                     self.stdout.write('[STATUS] Databases are now synchronized.\n')
                     self.stdout.write('Elapsed Time: %M minutes %S seconds.',
-                                      time.gmtime(end-start))
+                                      time.gmtime(end - start))
                 else:
                     self.stderr.write('[STATUS] Error encountered during sync. \n'
                                       '> Please check logs and databases '
@@ -90,12 +91,13 @@ class Command(BaseCommand):
                 self.stderr.write(sys.exc_info()[0])
                 raise
         else:
-            num_groups = Group.objects.filter(accounttype='Taiko Group',
-                                lastmodifieddate__lt=group_updatedate).count()
+            num_groups = Group.objects.filter(
+                accounttype='Taiko Group',
+                lastmodifieddate__lt=groupinfo.lastupdateddate).count()
             num_members = Member.objects.filter(
-                           lastmodifieddate__lt=member_lastupdatedate).count()
+                lastmodifieddate__lt=memberinfo.lastupdateddate).count()
             num_mships = Membership.objects.filter(
-                           lastmodifieddate__lt=membership_updatedate).count()
+                lastmodifieddate__lt=membershipinfo.lastupdateddate).count()
 
             self.stdout.write("> 'Group' update count: {}".format(num_groups))
             self.stdout.write("> 'Member' update count: {}".format(num_members))
@@ -105,48 +107,45 @@ class Command(BaseCommand):
                               "the NEO4J database with the SalesForce database, "
                               "re-run commans with '--sync' option.")
 
-
-    def query_updated_data(group_updatedate, member_updatedate,
-                               membership_updatedate):
-        groups = Group.objects.filter(accounttype='Taiko Group',
-                      lastmodifieddate__lt=group_updatedate).values(
-                          'Id', 'name', 'is_deleted')
-
+    def query_updated_data(self, group_updatedate, member_updatedate,
+                           membership_updatedate):
+        groups = Group.objects.filter(
+            accounttype='Taiko Group',
+            lastmodifieddate__lt=group_updatedate).values(
+                'Id', 'name', 'is_deleted')
         members = Member.objects.filter(
-                       lastmodifieddate__lt=member_lastupdatedate).values(
-                           'Id', 'firstname', 'lastname', 'dob', 'gender',
-                           'race', 'asian_ethnicity', 'is_deleted')
-
+            lastmodifieddate__lt=member_updatedate).values(
+                'Id', 'firstname', 'lastname', 'dob', 'gender',
+                'race', 'asian_ethnicity', 'is_deleted')
         mships = Membership.objects.filter(
-                           lastmodifieddate__lt=membership_updatedate).values(
-                               'Id', 'member', 'group', 'status',
-                               'startdate', 'enddate', 'is_deleted')
+            lastmodifieddate__lt=membership_updatedate).values(
+                'Id', 'member', 'group', 'status',
+                'startdate', 'enddate', 'is_deleted')
 
         return groups, members, mships
 
-
-    def _format_membership_data(mships)
+    def _format_membership_data(self, mships):
         self.group_memberships = {}
         for s in mships:
             # Rules for dealing with incomplete date information.
-            if s.startdate == None and s.enddate == None:
+            if s.startdate is None and s.enddate is None:
                 if s.status == 'Current':
                     startyear = 9999
                     endyear = 9999
                 else:
                     startyear = 'null'
                     endyear = 'null'
-            elif s.startdate != None and s.enddate == None:
+            elif s.startdate is not None and s.enddate is None:
                 if s.status == 'Current':
                     startyear = s.startdate.year
                     endyear = 9999
                 else:
                     startyear = s.startdate.year
                     endyear = s.startdate.year
-            elif s.startdate == None and s.enddate != None:
+            elif s.startdate is None and s.enddate is not None:
                 startyear = s.enddate.year
                 endyear = s.enddate.year
-            elif s.startdate != None and s.enddate != None:
+            elif s.startdate is None and s.enddate is not None:
                 startyear = s.startdate.year
                 endyear = s.enddate.year
 
@@ -163,7 +162,6 @@ class Command(BaseCommand):
             else:
                 self.group_memberships[s.group_id] = {s.Id: membership_dict}
 
-
     def _batch_update_relationships(self):
         count = 0
         batch = 1
@@ -172,7 +170,7 @@ class Command(BaseCommand):
         self.session = cypher.Session(NEO4J_ROOT_URI)
 
         for group, memberships in self.group_memberships.items():
-            count += 1;
+            count += 1
             if count >= 38:
                 count = 0
                 batch += 1
@@ -187,13 +185,18 @@ class Command(BaseCommand):
                 rel_error = True
                 self.stderr.write('! GROUP: ["{0}"] -- Error syncing Memberships/Connections.')
             else:
-                connect_count = nCr(num_connect, 2)
+                connect_count = self._nCr(num_connect, 2)
                 self.stdout.write('- GROUP: ["{0}"] -- # Membership: {1}, '
                                   '# Connection: {2}'.format(group,
                                                              num_memship,
                                                              connect_count))
         return rel_error
 
+    def _nCr(self, n, r):
+        if r > 0 and n >= r:
+            f = math.factorial
+            return int(f(n) / f(r) / f(n - r))
+        return None
 
     ####################################################
     # Methods for syncing NEO4J nodes and relationships
@@ -231,7 +234,7 @@ class Command(BaseCommand):
         else:
             if tx.finished:
                 self.stdout.write(">>> [{0}] 'Group' node(s) successfully "
-                                  "synced.".format(num_group_nodes))
+                                  "synced.".format(len(group_nodes)))
                 if num_removed:
                     self.stdout.write(">>> [{0}] 'Group' node(s) removed.".format(
                         num_removed))
@@ -239,7 +242,6 @@ class Command(BaseCommand):
                 return True
             else:
                 return False
-
 
     def _update_node_members(self, members):
         merge_cypher = ('MERGE (node:Member {{ sf_id: "{sf_id}" }}) '
@@ -298,13 +300,12 @@ class Command(BaseCommand):
             else:
                 return False
 
-
     def _update_rel_memberships(self, memberships):
         merge_cypher = ('MATCH (m_node:Member {{ sf_id: "{member_id}" }}),'
                         '(g_node:Group {{ sf_id: "{group_id}" }}) '
-                        'MERGE (m_node)-[rel:MEMBER_OF]->(g_node) '
+                        'MERGE (m_node)-[rel:MEMBER_OF '
+                        '{{ sf_id: "{mship_id}" }}]->(g_node) '
                         'ON CREATE SET rel += {{ '
-                        'sf_id: "{rel_id}", '
                         'status: "{status}", '
                         'start: toInt({start}), '
                         'end: toInt({end}), '
@@ -314,7 +315,6 @@ class Command(BaseCommand):
                         'start: toInt({start}), '
                         'end: toInt({end}), '
                         '_is_new: false, '
-                        '_count: coalesce(_count?, 0) + 1 }} '
                         'RETURN rel')
         delete_cypher = ('MATCH (m:Member)-[rel:MEMBER_OF]->(g:Group) '
                          'WHERE rel.sf_id = "{sf_id}" '
@@ -328,13 +328,13 @@ class Command(BaseCommand):
             for key, d in memberships.items():
                 if d['is_deleted']:
                     self.stdout.write('! MEMBERSHIP_IS_DELETED: {0}'.format(key))
-                    #num_removed += 1
-                    #query = delete_cypher.format(sf_id=d['Id'])
+                    num_removed += 1
+                    query = delete_cypher.format(sf_id=d['Id'])
                 else:
                     # Update or create if none exists.
                     query = merge_cypher.format(member_id=d['member_id'],
                                                 group_id=d['group_id'],
-                                                rel_id=d['Id'],
+                                                mship_id=d['Id'],
                                                 status=d['status'],
                                                 start=d['start'],
                                                 end=d['end'])
@@ -362,38 +362,45 @@ class Command(BaseCommand):
             else:
                 return False
 
-
     def _update_rel_connections(self, memberships):
         ret_cypher = ('MATCH (a:Member {{sf_id: "{a_id}" }})-[c:CONNECTED_TO '
-                      '{{group_id: "{group_id}" }}]-(b:Member) RETURN c')
+                      '{{_group_id: "{group_id}" }}]-(b:Member) '
+                      'WHERE c._a_mship = "{mship_id}" '
+                      'OR c._b_mship = "{mship_id}" '
+                      'RETURN c')
 
         new_cypher = ('MATCH (a:Member '
-                      '{{sf_id: "{a_id}" }})-[r1:MEMBER_OF]->(g:Group '
-                      '{{sf_id: "{g_id}"}}), '
+                      '{{sf_id: "{a_id}" }})-[r1:MEMBER_OF {{sf_id: '
+                      '"{mship_id}"}}]->(g:Group {{sf_id: "{group_id}"}}), '
                       '(b:Member)-[r2:MEMBER_OF]->(g:Group '
-                      '{{sf_id: "{g_id}"}}) '
+                      '{{sf_id: "{group_id}"}}) '
                       'WHERE NOT a = b AND r1.start <= r2.end '
                       'AND r2.start <= r1.end '
-                      'MERGE (a)-[c:CONNECTED_TO {{group_id:g.sf_id}}]-(b) '
+                      'MERGE (a)-[c:CONNECTED_TO {{_group_id: g.sf_id}}]-(b) '
                       'ON CREATE SET c += {{ '
                       'group: g.name, '
                       '_a_id: a.sf_id, '
+                      '_a_mship: r1.sf_id, '
                       '_a_start: r1.start, '
                       '_a_end: r1.end, '
                       '_b_id: b.sf_id, '
+                      '_b_mship: r2.sf_id, '
                       '_b_start: r2.start, '
                       '_b_end: r2.end }} '
-                      'RETURN c')
+                      'RETURN count(c)')
 
-        update_cypher = ('MATCH (a:Member {{sf_id: "{a_id}" }})-'
-                         '[c:CONNECTED_TO {{group_id: "{group_id}" }}]-(b:Member) '
+        update_cypher = ('MATCH (a:Member {{sf_id: "{m_id}" }})-'
+                         '[c:CONNECTED_TO {{_group_id: "{group_id}", '
+                         '{mship_label}: "{mship_id}"}}]-(b:Member) '
                          'SET c += {{ '
-                         '{m_name}: "{a_id}", '
-                         '{m_start}: {start}, '
-                         '{m_end}: {end} }}')
+                         '{id_label}: "{m_id}", '
+                         '{start_label}: {m_start}, '
+                         '{end_label}: {m_end} }}')
 
-        delete_cypher = ('MATCH (a:Member {{sf_id: "{a_id}" }})-'
-                         '[c:CONNECTED_TO {{group_id: "{group_id}" }}]-(b:Member) '
+        delete_cypher = ('MATCH (a:Member {{sf_id: "{m_id}" }})-'
+                         '[c:CONNECTED_TO {{group_id: "{group_id}"}}]-(b:Member) '
+                         'WHERE c._a_mship = "{mship_id}" '
+                         'OR c._b_mship = "{mship_id}" '
                          'DELETE c')
 
         try:
@@ -404,15 +411,17 @@ class Command(BaseCommand):
             # remove all related connections.
             for key, d in memberships:
                 if d['is_deleted']:
+                    self.stdout.write('! CONNECTION_IS_DELETED: {0}'.format(key))
                     num_removed += 1
-                    query = delete_cypher.format(a_id=d['member_id'],
-                                                 group_id=d['group_id'])
+                    query = delete_cypher.format(m_id=d['member_id'],
+                                                 group_id=d['group_id'],
+                                                 mship_id=key)
                     tx.append(query)
 
             # Iterate through newly-created/updated memberships and
             # update its corresponding connections.
             for membership_rel in self.membership_rels:
-                # Get properties dict from membership Relationship object.
+                # Get properties dict from Membership Relationship object.
                 # This is a HACK for working with Record results from
                 # cypher transactions. Due to wrong uri (localhost instead
                 # of remote), connection is refused (unresolved bug in py2neo?).
@@ -423,14 +432,16 @@ class Command(BaseCommand):
                     # If newly-added membership relationship,
                     # create new connection relationships.
                     query = new_cypher.format(a_id=d['member_id'],
-                                              g_id=d['group_id'])
+                                              group_id=d['group_id'],
+                                              mship_id=rel['sf_id'])
                     tx.append(query)
                 else:
                     # If modified and existing membership relationship,
                     # update/delete connection relationships.
                     # Get all connections related to specified membership.
                     ret_query = ret_cypher.format(a_id=d['member_id'],
-                                                  group_id=d['group_id'])
+                                                  group_id=d['group_id'],
+                                                  mship_id=rel['sf_id'])
                     connections = self.session.execute(ret_query)
 
                     # For each connection relation, check if updated startyear
@@ -451,18 +462,22 @@ class Command(BaseCommand):
                                 # Dates still overlap, so update.
                                 if rel['start'] <= c['_b_end'] and \
                                    c['_b_start'] <= rel['end']:
-                                    query = update_cypher.format(m_name="_a_id",
-                                                        a_id = d['member_id'],
-                                                        group_id=d['group_id'],
-                                                        m_start="_a_start",
-                                                        m_end="_a_end",
-                                                        start=rel['start'],
-                                                        end=rel['end'])
+                                    query = update_cypher.format(
+                                        m_id=d['member_id'],
+                                        group_id=d['group_id'],
+                                        mship_label="_a_mship",
+                                        mship_id=rel['sf_id'],
+                                        id_label="_a_id",
+                                        start_label="_a_start",
+                                        end_label="_a_end",
+                                        start=rel['start'],
+                                        end=rel['end'])
                                 else:
                                     # Dates no longer overlap, so remove.
                                     query = delete_cypher.format(
-                                                         a_id=d['member_id'],
-                                                         group_id=d['group_id'])
+                                        m_id=d['member_id'],
+                                        group_id=d['group_id'],
+                                        mship_id=rel['sf_id'])
 
                         elif d['member_id'] == c['_b_id']:
                             if rel['start'] == c['_b_start'] and \
@@ -471,21 +486,25 @@ class Command(BaseCommand):
                             else:
                                 if rel['start'] <= c['_a_end'] and \
                                    c['_a_start'] <= rel['end']:
-                                    query = update_cypher.format(m_name="_b_id",
-                                                        a_id=d['member_id'],
-                                                        group_id=d['group_id'],
-                                                        m_start="_b_start",
-                                                        m_end="_b_end",
-                                                        start=rel['start'],
-                                                        end=rel['end'])
+                                    query = update_cypher.format(
+                                        m_id=d['member_id'],
+                                        group_id=d['group_id'],
+                                        mship_label="_b_mship",
+                                        mship_id=rel['sf_id'],
+                                        id_label="_b_id",
+                                        start_label="_b_start",
+                                        end_label="_b_end",
+                                        start=rel['start'],
+                                        end=rel['end'])
                                 else:
                                     query = delete_cypher.format(
-                                                         a_id=d['member_id'],
-                                                         group_id=d['group_id'])
+                                        m_id=d['member_id'],
+                                        group_id=d['group_id'],
+                                        mship_id=rel['sf_id'])
 
                         tx.append(query)
 
-            connection_rels = tx.commit()
+            num_connect_rels = tx.commit()
         except cypher.TransactionError as error:
             self.stderr.write('! --- TRANSACTION ERROR --- !\n')
             self.stderr.write(str(error))
@@ -493,17 +512,12 @@ class Command(BaseCommand):
             return False
         else:
             if tx.finished:
-                num_results = len(connection_rels)
-                # Nested empty lists returned when no query matches or updates.
-                if num_results == 1:
-                    num_results = len(connection_rels[0])
-
                 self.stdout.write(">>> [{0}] 'Connection' relationship(s) "
-                                  "successfully synced.".format(num_results))
+                                  "successfully synced.".format(num_connect_rels))
                 if num_removed:
                     self.stdout.write(">>> [{0}] 'Connection' relationship(s) "
                                       "removed.".format(num_removed))
 
-                return True, num_results
+                return True, num_connect_rels
             else:
                 return False

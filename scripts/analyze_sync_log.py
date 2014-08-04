@@ -3,6 +3,7 @@ import re
 import sys
 import math
 
+
 def nCr(n,r):
     f = math.factorial
     return int(f(n) / f(r) / f(n-r))
@@ -43,7 +44,7 @@ def analyze_log():
                             duplicates = (membership_updates - count)
                             group_duplicates[group] = duplicates
             except:
-                print('ERROR at line: {0}',line)
+                print('ERROR at line: {0}'.format(line))
                 print("Unexpected error: {}".format(sys.exc_info()[0]))
 
     f.close()

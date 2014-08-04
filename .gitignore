@@ -42,6 +42,7 @@ src/
 logs/
 media/
 static/
+share/
 .*
 !/.gitignore
 
