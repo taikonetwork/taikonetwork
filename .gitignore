@@ -41,10 +41,16 @@ run/
 src/
 logs/
 media/
-static/
+static/*
+taikonetwork/static/*
+!taikonetwork/static/css/
+!taikonetwork/static/misc/
+!taikonetwork/static/js/
+taikonetwork/static/js/*
+!taikonetwork/static/js/taiko/
 share/
 .*
-!/.gitignore
+!.gitignore
 
 # Virtual environment
 pyvenv.cfg
