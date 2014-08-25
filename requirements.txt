@@ -9,7 +9,7 @@ pytz==2014.4
 
 
 # MAIN PACKAGES:
-Django==1.6.5
+Django==1.6.6
 django-salesforce==0.3
 gunicorn==18.0
 psycopg2==2.5.3
