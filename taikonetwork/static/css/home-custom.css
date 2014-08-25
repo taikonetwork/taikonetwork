@@ -10,7 +10,7 @@ footer {
 
 .logo-font {
   font-family: 'Exo 2', sans-serif;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 28px;
 }
 
@@ -41,9 +41,18 @@ footer {
   color: #fff;
 }
 
+.infocontainer {
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 700;
+  font-style: italic;
+  font-size: 20px;
+  text-align: center;
+  color: #777; 
+}
+
 .btncontainer {
   text-align: center;
-  margin: 60px 0 60px;
+  margin: 30px 0 60px;
 }
 
 .btncontainer .btn {
