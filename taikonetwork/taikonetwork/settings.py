@@ -16,7 +16,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'en#7vz#busc_@ni^y4_&^-8#m7rh9k1!!newwa2td6u76x9ejz'
+SECRET_KEY = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,6 +38,8 @@ INSTALLED_APPS = (
     'salesforce',
     'datahandler',
     'home',
+    'map',
+    'graph',
 )
 
 MIDDLEWARE_CLASSES = (
