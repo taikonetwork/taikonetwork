@@ -1,0 +1,21 @@
+body {
+    padding-top: 70px;
+}
+
+.dropdown-menu {
+    min-width: 0;
+}
+
+.logo-font {
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+}
+
+.logo-nav-pos {
+    margin-right: 60px;
+}
+
+.icon-sep {
+    margin-right: 5px;
+}

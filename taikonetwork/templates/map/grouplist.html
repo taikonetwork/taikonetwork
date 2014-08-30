@@ -1,0 +1,64 @@
+{% extends "base-explore.html" %}
+
+{% block title %}Taiko Network: Groups{% endblock %}
+
+{% block custom-css %}
+<link href="{{ STATIC_URL }}css/map-custom.css" rel="stylesheet">
+{% endblock %}
+
+{% block navbar-active %}
+            <li><a href="/map/">Map</a></li>
+            <li class="active"><a href="/map/groups/">Groups</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Graphs<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#">Network Graph</a></li>
+                <li><a href="#">Find Connections</a></li>
+                <li><a href="#">Degrees of Separation</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Metrics<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#">Ranking</a></li>
+                <li><a href="#">Centrality</a></li>
+              </ul>
+            </li>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+      <div id="dashboard_div">
+          <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion"
+                      href="#filter-controls">Filter Options</a>
+                </h4>
+              </div>
+              <div id="filter-controls" class="panel-collapse collapse in">
+                <div class="panel-body">
+                  <div id="name_filter_div" class="search-filter"></div>
+                  <div id="type_filter_div" class="search-filter"></div>
+                  </br>
+                  <div id="city_filter_div" class="search-filter"></div>
+                  <div id="state_filter_div" class="search-filter"></div>
+                  <div id="country_filter_div" class="search-filter"></div>
+                  <div id="range_filter_div" class="misc-filter"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <h2 class="figure-title">Taiko Groups</h2>
+        <div id="table_div"></div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block custom-js %}
+    <!-- Load Google AJAX API -->
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">var groups = {{ groups_json | safe }}</script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/taiko/grouplist.js"></script>
+{% endblock %}
