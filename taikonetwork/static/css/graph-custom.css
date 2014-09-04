@@ -3,17 +3,29 @@ html, body {
   overflow: hidden;
 }
 
-.slider {
-  margin-left: 15px;
-  margin-right: 15px;
-}
-
-.range-slider {
+.graph-control-elem {
   float: left;
 }
 
-.submit-btn {
+.graph-control-btn {
   float: right;
+}
+
+.graph-control-inline {
+  display: inline-block;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.graph-control-inline .form-control {
+  width: 200px;
+  margin-left: 5px;
+  display: inline-block;
+}
+
+.slider {
+  margin-left: 15px;
+  margin-right: 15px;
 }
 
 .jumbotron {

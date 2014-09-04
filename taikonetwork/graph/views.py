@@ -16,7 +16,8 @@ def network_graph(request):
 
 
 def demographic_graph(request):
-    graph_json = query_entire_network()
+    # graph_json = query_entire_network()
+    graph_json = create_test_network(500, 5000)
     colors_json = demographic_group_colors()
 
     return render(request, 'graph/demographic_graph.html',

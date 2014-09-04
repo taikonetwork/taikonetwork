@@ -1,39 +1,66 @@
-function renderGraphOptions(s) {
-  document.getElementById('refresh-btn').addEventListener('click', function() {
+// DOM utility function
+var _ = {
+  $: function (id) {
+    return document.getElementById(id);
+  }
+};
+var filter;
+
+function updateFilterControls(graph, filter) {
+  var raceCategories = {},
+      asianCategories = {};
+
+  // Get categories
+  graph.nodes().forEach(function(n) {
+    raceCategories[n.data['race']] = true;
+    asianCategories[n.data['asian_ethnicity']] = true;
+  })
+
+  // Add categories to appropriate select element
+  var raceSelectElem = _.$('race-category');
+  Object.keys(raceCategories).forEach(function(c) {
+    if (c != 'None') {
+      var optionElem = document.createElement('option');
+      optionElem.text = c;
+      raceSelectElem.add(optionElem);
+    }
+  });
+
+  var asianSelectElem = _.$('asian-category');
+  Object.keys(asianCategories).forEach(function(c) {
+    if (c != 'None') {
+      var optionElem = document.createElement('option');
+      optionElem.text = c;
+      asianSelectElem.add(optionElem);
+    }
+  });
+
+  // Reset button
+  _.$('reset-filter-btn').addEventListener('click', function(e) {
+    _.$('gender-category').selectedIndex = 0;
+    _.$('race-category').selectedIndex = 0;
+    _.$('asian-category').selectedIndex = 0;
+    filter.undo().apply();
+  });
+}
+
+
+function renderNodeGroups(s) {
+  _.$('regroup-btn').addEventListener('click', function() {
     var groupOption = $("input:radio[name = 'group-option']:checked").val();
-    var genderFilter = $("input:radio[name = 'gender-filter']:checked").val();
-    var lastGroupOption = document.getElementById('lastGroupOption').value;
-    var lastGenderFilter = document.getElementById('lastGenderFilter').value;
+    var lastGroupOption = _.$('lastGroupOption').value;
 
     if (groupOption != lastGroupOption) {
-      recolorNodes(s, demoColors[groupOption], groupOption);
-      drawGroupLegend(demoColors[groupOption], groupOption);
-      document.getElementById('lastGroupOption').value = groupOption;
+      _recolorNodes(s, demoColors[groupOption], groupOption);
+      _drawGroupLegend(demoColors[groupOption], groupOption);
+      _.$('lastGroupOption').value = groupOption;
+      s.refresh();
     }
-    if (genderFilter != lastGenderFilter) {
-      filterNodes(s, genderFilter);
-      document.getElementById('lastGenderFilter').value = genderFilter;
-    }
-
-    s.refresh();
   }, true);
 }
 
-function filterNodes(s, genderFilter) {
-  var i,
-      nodes = s.graph.nodes(),
-      len = nodes.length;
 
-  for (i = 0; i < len; i++) {
-    if (nodes[i].data['gender'] == genderFilter || genderFilter == 'default') {
-      nodes[i].hidden = false;
-    } else {
-      nodes[i].hidden = true;
-    }
-  }
-}
-
-function recolorNodes(s, colors, group) {
+function _recolorNodes(s, colors, group) {
   var i,
       nodes = s.graph.nodes(),
       len = nodes.length;
@@ -49,9 +76,10 @@ function recolorNodes(s, colors, group) {
   }
 }
 
-function drawGroupLegend(colors, groupOption) {
-  var box = document.getElementById('legend-box');
-  var group_div = document.getElementById('legend-groups');
+
+function _drawGroupLegend(colors, groupOption) {
+  var box = _.$('legend-box');
+  var group_div = _.$('legend-groups');
   group_div.innerHTML = '';
 
   if (groupOption == 'default') {
@@ -67,6 +95,39 @@ function drawGroupLegend(colors, groupOption) {
   }
 }
 
+
+function createSlider() {
+  $('#ageRangeSlider').slider({
+    min: 1,
+    max: 81,
+    step: 1,
+    value: [1, 81],
+    tooltip: 'hide'
+  });
+
+  $('#ageRangeSlider').on('slide', function(e) {
+    var startAge = e.value[0].toString();
+    var endAge  = e.value[1].toString();
+    var range = '';
+    if (startAge == '81') { startAge = '81+'; }
+    if (endAge == '81') { endAge = '80+'; }
+
+    if (startAge == endAge) {
+      range = endAge;
+    } else {
+      range = startAge + ' – ' + endAge;
+    }
+
+    $('#ageRangeVal').text(range);
+    if (range == '1 – 80+') {
+      $('#ageRangeVal').css('color', 'black');
+    } else {
+      $('#ageRangeVal').css('color', '#d9534f');
+    }
+  });
+}
+
+
 function setNodeSizeToDegree(s) {
   var i,
       nodes = s.graph.nodes(),
@@ -77,12 +138,45 @@ function setNodeSizeToDegree(s) {
   }
 }
 
+function applyGenderFilter(e) {
+  var c = e.target[e.target.selectedIndex].value;
+  filter
+    .undo('gender-category')
+    .nodesBy(function(n) {
+      return !c.length || n.data['gender'] === c;
+    }, 'gender-category')
+    .apply();
+}
+
+function applyRaceFilter(e) {
+  var c = e.target[e.target.selectedIndex].value;
+  filter
+    .undo('race-category')
+    .nodesBy(function(n) {
+      return !c.length || n.data['race'] === c;
+    }, 'race-category')
+    .apply();
+}
+
+function applyAsianEthnicityFilter(e) {
+  var c = e.target[e.target.selectedIndex].value;
+  filter
+    .undo('asian-category')
+    .nodesBy(function(n) {
+      return !c.length || n.data['asian_ethnicity'] === c;
+    }, 'asian-category')
+    .apply();
+}
+
+
 $(document).ready(function() {
+  createSlider();
+
   s = new sigma({
     graph: graphData,
     container: 'graph-container',
     renderer: {
-      container: document.getElementById('graph-container'),
+      container: _.$('graph-container'),
       type: 'canvas'
     },
     settings: {
@@ -96,11 +190,16 @@ $(document).ready(function() {
       edgeColor: 'default'
     }
   });
-
   setNodeSizeToDegree(s);
+
+  filter = new sigma.plugins.filter(s);
+  updateFilterControls(s.graph, filter);
+  _.$('gender-category').addEventListener('change', applyGenderFilter);
+  _.$('race-category').addEventListener('change', applyRaceFilter);
+  _.$('asian-category').addEventListener('change', applyAsianEthnicityFilter);
+
+  renderNodeGroups(s);
 
   s.refresh();
   s.startForceAtlas2();
-
-  renderGraphOptions(s);
 });
