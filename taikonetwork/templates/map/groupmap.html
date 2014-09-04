@@ -1,0 +1,29 @@
+{% extends "base-explore.html" %}
+
+{% block title %}Taiko Network: Map{% endblock %}
+
+{% block custom-css %}
+<link href="{{ STATIC_URL }}css/map-custom.css" rel="stylesheet">
+{% endblock %}
+
+{% block navbar-active %}
+            <li class="active"><a href="/map/">Map</a></li>
+            <li><a href="/map/groups/">Groups</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Graphs<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="/graphs/network/">Network Graph</a></li>
+                <li><a href="/graphs/demographic/">Demographic Graph</a></li>
+                <li><a href="/graphs/membership/">Membership Graph</a></li>
+                <li><a href="/graphs/connections/">Find Connections</a></li>
+                <li><a href="/graphs/degrees/">Degrees of Separation</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Metrics<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="/metrics/ranking/">Ranking</a></li>
+                <li><a href="/metrics/centrality/">Centrality</a></li>
+              </ul>
+            </li>
+{% endblock %}

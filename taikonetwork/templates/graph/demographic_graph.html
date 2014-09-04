@@ -1,0 +1,146 @@
+{% extends "base-explore.html" %}
+
+{% block title %}Taiko Network: Demographic Graph{% endblock %}
+
+{% block custom-css %}
+    <link href="{{ STATIC_URL }}css/plugins/bootstrap-slider.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/graph-custom.css" rel="stylesheet">
+{% endblock %}
+
+{% block navbar-active %}
+            <li><a href="/map/">Map</a></li>
+            <li><a href="/map/groups/">Groups</a></li>
+            <li class="dropdown active">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Graphs<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="/graphs/network/">Network Graph</a></li>
+                <li class="active"><a href="/graphs/demographic/">Demographic Graph</a></li>
+                <li><a href="/graphs/membership/">Membership Graph</a></li>
+                <li><a href="/graphs/connections/">Find Connections</a></li>
+                <li><a href="/graphs/degrees/">Degrees of Separation</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Metrics<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="/metrics/ranking/">Ranking</a></li>
+                <li><a href="/metrics/centrality/">Centrality</a></li>
+              </ul>
+            </li>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+          <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion"
+                      href="#demographic-options">Demographic Graph: Options</a>
+                </h4>
+              </div>
+              <div id="demographic-options" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <div class="row">
+                    <div class="col-lg-6">
+                      <div class="btn-group" data-toggle="buttons">
+                        <button type="button" class="btn" disabled>Group members by: </button>
+                        <label class="btn btn-primary active">
+                          <input type="radio" name="group-option" id="group-default" value="default" checked> Default
+                        </label>
+                        <label class="btn btn-primary">
+                          <input type="radio" name="group-option" id="group-gender" value="gender"> Gender
+                        </label>
+                        <label class="btn btn-primary">
+                          <input type="radio" name="group-option" id="group-race" value="race"> Race
+                        </label>
+                        <label class="btn btn-primary">
+                          <input type="radio" name="group-option" id="group-asianethnicity" value="asian_ethnicity"> Asian Ethnicity
+                        </label>
+                        <label class="btn btn-primary">
+                          <!-- TODO: implement grouping by age -->
+                          <input type="radio" name="group-option" id="group-age" value="default"> Age
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                      <div class="btn-group" data-toggle="buttons">
+                        <button type="button" class="btn" disabled>Filter by Gender: </button>
+                        <label class="btn btn-primary active">
+                          <input type="radio" name="gender-filter" id="genfil-all" value="default" checked> Default
+                        </label>
+                        <label class="btn btn-primary">
+                          <input type="radio" name="gender-filter" id="genfil-male" value="Male"> Male
+                        </label>
+                        <label class="btn btn-primary">
+                          <input type="radio" name="gender-filter" id="genfil-female" value="Female"> Female
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <br>
+                  <div class="range-slider">
+                    <button type="button" class="btn" disabled>Filter by Age: </button>
+                    <input id="ageRangeSlider" type="text" value="">
+                    <strong>Age Range (years old): <span id="ageRangeVal">1 – 80+</span></strong>
+                  </div>
+                  <div class="submit-btn">
+                    <input type="submit" class="btn btn-success" id="refresh-btn" value="Refresh Graph">
+                  </div>
+                  <div style="clear: both;"></div>
+
+                  <input type="hidden" id="lastGroupOption" value="default">
+                  <input type="hidden" id="lastGenderFilter" value="default">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="jumbotron graph-bg">
+        <div id="legend-box" class="legend">
+          <h4>Groups:</h4>
+          <div id="legend-groups"></div>
+        </div>
+        <div id="graph-container"></div>
+    </div>
+{% endblock %}
+
+{% block custom-js %}
+    <!-- sigma.js -->
+    <script src="{{ STATIC_URL }}js/sigma/sigma.min.js"></script>
+    <script src="{{ STATIC_URL }}js/sigma/plugins/sigma.layout.forceAtlas2.min.js"></script>
+    <script src="{{ STATIC_URL }}js/plugins/bootstrap-slider.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('#ageRangeSlider').slider({
+          min: 1,
+          max: 81,
+          step: 1,
+          value: [1, 81],
+          tooltip: 'hide'
+        });
+        $("#ageRangeSlider").on("slide", function(slideEvt) {
+          var startAge = slideEvt.value[0].toString();
+          var endAge  = slideEvt.value[1].toString();
+          var range = '';
+          if (startAge == endAge && endAge == '81') {
+            range = '80+';
+          } else {
+            if (endAge == '81') {
+              endAge = '80+';
+            }
+            range = startAge + ' – ' + endAge;
+          }
+          $("#ageRangeVal").text(range);
+        });
+      });
+    </script>
+    <script>var graphData = {{ graph_json | safe }}</script>
+    <script>var demoColors = {{ colors_json | safe }}</script>
+    <script src="{{ STATIC_URL }}js/taiko/demographic_graph.js"></script>
+{% endblock %}
+

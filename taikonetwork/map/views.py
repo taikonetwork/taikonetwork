@@ -5,8 +5,8 @@ from datahandler.models import Group
 import json
 
 
-def globe(request):
-    return render(request, 'map/globe.html')
+def groupmap(request):
+    return render(request, 'map/groupmap.html')
 
 
 def grouplist(request):

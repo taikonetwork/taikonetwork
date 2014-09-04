@@ -1,21 +1,32 @@
 body {
-    padding-top: 70px;
+  padding-top: 70px;
 }
 
 .dropdown-menu {
-    min-width: 0;
+  min-width: 0;
 }
 
 .logo-font {
-    font-family: 'Exo 2', sans-serif;
-    font-weight: 800;
-    font-size: 28px;
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 800;
+  font-size: 28px;
 }
 
 .logo-nav-pos {
-    margin-right: 60px;
+  margin-right: 60px;
 }
 
 .icon-sep {
-    margin-right: 5px;
+  margin-right: 5px;
+}
+
+.panel-heading a:after {
+  font-family: 'Glyphicons Halflings';
+  content: "\e114";
+  float: right;
+  color: grey;
+}
+
+.panel-heading a.collapsed:after {
+  content: "\e080";
 }
