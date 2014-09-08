@@ -95,7 +95,7 @@ class Neo4jUpdater:
                     query = merge_cypher.format(sf_id=m['Id'],
                                                 firstname=m['firstname'],
                                                 lastname=m['lastname'],
-                                                dob=m['dob'], race=m['race'],
+                                                dob=str(m['dob']), race=m['race'],
                                                 gender=m['gender'],
                                                 asian_ethnicity=m['asian_ethnicity'])
                 tx.append(query)

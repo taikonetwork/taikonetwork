@@ -1,88 +1,142 @@
-function renderGraphOptions(s) {
-  document.getElementById('refresh-btn').addEventListener('click', function() {
-    var groupOption = $("input:radio[name = 'group-option']:checked").val();
-    var genderFilter = $("input:radio[name = 'gender-filter']:checked").val();
-    var lastGroupOption = document.getElementById('lastGroupOption').value;
-    var lastGenderFilter = document.getElementById('lastGenderFilter').value;
+// DOM utility function
+var _ = {
+  $: function (id) {
+    return document.getElementById(id);
+  },
 
-    if (groupOption != lastGroupOption) {
-      recolorNodes(s, demoColors[groupOption], groupOption);
-      drawGroupLegend(demoColors[groupOption], groupOption);
-      document.getElementById('lastGroupOption').value = groupOption;
-    }
-    if (genderFilter != lastGenderFilter) {
-      filterNodes(s, genderFilter);
-      document.getElementById('lastGenderFilter').value = genderFilter;
-    }
+  show: function (id) {
+    var elem = document.getElementById(id);
+    elem.className = elem.className.replace(/(?:^|\s)hidden(?!\S)/g, '');
+  },
 
-    s.refresh();
-  }, true);
-}
+  hide: function (id) {
+    document.getElementById(id).className = 'hidden';
+  }
+};
 
-function filterNodes(s, genderFilter) {
-  var i,
-      nodes = s.graph.nodes(),
-      len = nodes.length;
+var s,
+    filter;
 
-  for (i = 0; i < len; i++) {
-    if (nodes[i].data['gender'] == genderFilter || genderFilter == 'default') {
-      nodes[i].hidden = false;
+
+function search() {
+  var output = [],
+      term = _.$('search-term').value,
+      results = _.$('search-results'),
+      match = RegExp(term.toLowerCase());
+
+  results.innerHTML = '';
+  if (term.length < 3) {
+      results.innerHTML = '<em>Search term must be a minimum of 3 letters.</em>';
+  } else {
+    s.graph.nodes().forEach(function(n) {
+      match.test(n.label.toLowerCase()) && output.push({
+        id: n.id,
+        name: n.label
+      });
+    });
+    results.innerHTML = '<strong>Search Results: </strong>';
+    if (output.length < 1) {
+      results.innerHTML += '<em>No results found.</em>';
     } else {
-      nodes[i].hidden = true;
+      output.forEach(function(o) {
+        results.innerHTML += '<li><a href="javascript:void(0);" onclick="onSearchNode(\''+ o.id +'\')">' + o.name + '</a></li>';
+      });
     }
   }
+
+  _.show('search-results');
 }
 
-function recolorNodes(s, colors, group) {
-  var i,
-      nodes = s.graph.nodes(),
-      len = nodes.length;
+function clearSearch() {
+  _.$('search-term').value = '';
+  _.$('search-results').innerHTML = '';
+  _.hide('search-results');
+}
 
-  if (group == 'default') {
-    for (i = 0; i < len; i++) {
-      nodes[i].color = colors[i % 5];
-    }
-  } else {
-    for (i = 0; i < len; i++) {
-      nodes[i].color = colors[nodes[i].data[group]] || 'rgba(138, 138, 138, 0.7)';
-    }
+function onSearchNode(id) {
+  var node = s.graph.nodes(id);
+  displayFilterNodeInfo(node);
+}
+
+function onClickNode(e) {
+  var node = e.data.node;
+  displayFilterNodeInfo(node);
+}
+
+function displayFilterNodeInfo(node) {
+  var neighbors = s.graph.neighbors(node.id);
+
+  // Filter all nodes except clicked node + neighbors
+  filter
+    .undo()
+    .neighborsOf(node.id)
+    .apply();
+
+  // Display information of clicked node
+  var infoProfile = _.$('info-profile');
+  infoProfile.innerHTML = '';
+  infoProfile.innerHTML += '<img src="/static/images/profile.png" alt="Profile Image" id="profile-img" class="img-thumbnail">\n';
+  infoProfile.innerHTML += '<h4>' + node.label + '</h4>\n';
+  infoProfile.innerHTML += '<a href="#">View Profile</a>\n';
+
+  var infoConnections = _.$('info-connections-list');
+  infoConnections.innerHTML = '';
+  neighbors.forEach(function(n) {
+    infoConnections.innerHTML += '<li><a href="#">' + n.label + '</a></li>\n'
+  });
+
+  _.show('info-pane');
+  _.show('info-exit-btn');
+}
+
+// Add a method to the graph model that returns an
+// object with every neighbors of a node inside:
+sigma.classes.graph.addMethod('neighbors', function(id) {
+  if (typeof id !== 'string')
+        throw 'neighbors: the node id must be a string.';
+  var k,
+      neighbors = [];
+
+  for(k in this.allNeighborsIndex[id]) {
+    neighbors.push(this.nodesIndex[k]);
   }
+  return neighbors;
+});
+
+function resetGraphCanvas() {
+  // hide info pane
+  _.$('info-profile').innerHTML = '';
+  _.$('info-connections-list').innterHTML = '';
+  _.hide('info-pane');
+  _.hide('info-exit-btn');
+
+  // hide search results
+  _.$('search-results').innerHTML = '';
+  _.hide('search-results');
+
+  // undo graph filers
+  filter.undo().apply();
 }
 
-function drawGroupLegend(colors, groupOption) {
-  var box = document.getElementById('legend-box');
-  var group_div = document.getElementById('legend-groups');
-  group_div.innerHTML = '';
-
-  if (groupOption == 'default') {
-    box.style.display = 'none';
-  } else {
-    box.style.display = 'block';
-    for (var key in colors) {
-      group_div.innerHTML += '<div><div class="circle" ' +
-        'style="background: ' + colors[key] + ';"></div>' + key + '</div>\n';
-    }
-    group_div.innerHTML += '<div><div class="circle" style="background: ' +
-      'rgba(138, 138, 138, 0.7);"></div>No Data</div>';
-  }
-}
-
-function setNodeSizeToDegree(s) {
+function setNodeProperties() {
   var i,
       nodes = s.graph.nodes(),
       len = nodes.length;
 
   for (i = 0; i < len; i++) {
     nodes[i].size = s.graph.degree(nodes[i].id);
+    nodes[i].x = Math.cos(2 * i * Math.PI / len) - (2 * Math.random());
+    nodes[i].y = Math.sin(2 * i * Math.PI / len) - (2 * Math.random());
   }
 }
+
 
 $(document).ready(function() {
   s = new sigma({
     graph: graphData,
     container: 'graph-container',
     renderer: {
-      container: document.getElementById('graph-container'),
+      container: _.$('graph-container'),
       type: 'canvas'
     },
     settings: {
@@ -92,14 +146,16 @@ $(document).ready(function() {
       maxEdgeSize: 0.3,
       zoomingRatio: 1.3,
       drawLabels: false,
-      drawEdges: false,
-      edgeColor: 'default'
+      edgeColor: 'default',
+      doubleClickEnabled: false
     }
   });
+  setNodeProperties();
+  filter = new sigma.plugins.filter(s);
 
-  setNodeSizeToDegree(s);
+  // Bind the events:
+  s.bind('clickNode doubleClickNode', onClickNode);
+  _.$('search-btn').addEventListener('click', search);
 
   s.refresh();
-  s.startForceAtlas2();
-
 });

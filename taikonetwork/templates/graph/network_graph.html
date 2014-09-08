@@ -1,9 +1,9 @@
 {% extends "base-explore.html" %}
 
-{% block title %}Taiko Network: Find Connections{% endblock %}
+{% block title %}Taiko Network: Network Graph{% endblock %}
 
 {% block custom-css %}
-<link href="#" rel="stylesheet">
+<link href="{{ STATIC_URL }}css/graph-custom.css" rel="stylesheet">
 {% endblock %}
 
 {% block navbar-active %}
@@ -13,10 +13,10 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Graphs<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
                 <li class="active"><a href="/graphs/network/">Network Graph</a></li>
-                <li><a href="/graphs/demographic/">Demographic Graph</a></li>
+                <li><a href="/graphs/demographic/">Demographics Graph</a></li>
                 <li><a href="/graphs/membership/">Membership Graph</a></li>
-                <li><a href="/graphs/connections/">Find Connections</a></li>
-                <li><a href="/graphs/degrees/">Degrees of Separation</a></li>
+                <li><a href="/graphs/connection/">Find Connections</a></li>
+                <li><a href="/graphs/degree/">Degrees of Separation</a></li>
               </ul>
             </li>
             <li class="dropdown">
@@ -29,24 +29,89 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-          <div class="panel-group" id="accordion">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion"
-                      href="#connections-input">Find Connections</a>
-                </h4>
+    <!-- Canvas -->
+    <div class="jumbotron">
+      <!-- Graph visualization -->
+      <div id="graph-container"></div>
+
+      <div id="control-pane">
+        <h3 class="underline">Taiko Network Graph</h3>
+
+        <div>
+          This graph shows the connections between members of the Taiko
+          community and their affiliations with various Taiko groups.
+        </div>
+
+        <div><a href="#" data-toggle="modal" data-target="#vizInfoModal">
+                <span class="glyphicon glyphicon-info-sign icon-sep"></span>
+                More about this visualization</a>
+        </div>
+        <div class="modal fade" id="vizInfoModal" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span></button>
+                <h5 class="modal-title" id="infoModalLabel">About this graph visualization</h5>
               </div>
-              <div id="connections-input" class="panel-collapse collapse">
-                <div class="panel-body">
-                    <p>Find the path (if it exists) that connects any
-                        two members of the taiko community.</p>
-                    <p>Enter the first and last name of the members.</p>
+              <div class="modal-body">
+               This graph shows connections among members of the Taiko community.
+               The size of a node indicates how many connections it has.
+               You can zoom in to see labels (via scrolling or touchpad),
+               hover over a node, or search for a name in the search box.
+               Clicking on a node will display only that node's immediate connections.
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+        <div>
+            <h4>Legend:</h4>
+            <div><div class="node" style="background: black;"></div>People, Groups</div>
+            <div><div class="edge">/</div>Connections, Memberships</div>
+        </div>
+        <span class="line"></span>
+
+        <div>
+          <h4>Search:</h4>
+          <form role="search">
+            <div id="search-input" class="input-group">
+                <input type="text" class="form-control" placeholder="Search by name" value="" id="search-term" onfocus="clearSearch();">
+                <div class="input-group-btn">
+                    <button id="search-btn" class="btn btn-default" type="submit">
+                        <i class="glyphicon glyphicon-search"></i></button>
                 </div>
-              </div>
             </div>
+          </form>
+        </div>
+
+        <div id="search-results" class="hidden"></div>
+      </div> <!-- end .control-pane -->
+
+      <div id="info-exit-btn" class="hidden">
+          <a href="javascript:void(0)" onclick="resetGraphCanvas();" data-toggle="tooltip" title="Return to the full network">
+              <span class="glyphicon glyphicon-remove-circle info-exit-icon"></span></a>
+      </div>
+
+      <div id="info-pane" class="hidden">
+          <h3 class="underline">Node Information</h3>
+          <div id="info-profile"></div>
+          <span class="line"></span>
+
+          <div>
+            <h4>Connections:</h4>
+            <div id="info-connections-list"></div>
           </div>
-    </div>
+
+      </div> <!-- end .info-pane -->
+    </div> <!-- end .jumbotron canvas -->
+{% endblock %}
+
+{% block custom-js %}
+    <!-- sigma.js -->
+    <script src="{{ STATIC_URL }}js/sigma/sigma.min.js"></script>
+    <script src="{{ STATIC_URL }}js/sigma/plugins/sigma.plugins.filter.min.js"></script>
+    <script>var graphData = {{ graph_json | safe }}</script>
+    <script src="{{ STATIC_URL }}js/taiko/network_graph.js"></script>
 {% endblock %}
 

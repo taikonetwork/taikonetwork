@@ -14,10 +14,10 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Graphs<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
                 <li><a href="/graphs/network/">Network Graph</a></li>
-                <li class="active"><a href="/graphs/demographic/">Demographic Graph</a></li>
+                <li class="active"><a href="/graphs/demographic/">Demographics Graph</a></li>
                 <li><a href="/graphs/membership/">Membership Graph</a></li>
-                <li><a href="/graphs/connections/">Find Connections</a></li>
-                <li><a href="/graphs/degrees/">Degrees of Separation</a></li>
+                <li><a href="/graphs/connection/">Find Connections</a></li>
+                <li><a href="/graphs/degree/">Degrees of Separation</a></li>
               </ul>
             </li>
             <li class="dropdown">
@@ -30,92 +30,100 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-          <div class="panel-group" id="accordion">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion"
-                      href="#demographic-options">Demographic Graph: Options</a>
-                </h4>
-              </div>
-              <div id="demographic-options" class="panel-collapse collapse">
-                <div class="panel-body">
-                  <!-- Graph grouping controls -->
-                  <div class="btn-group graph-control-elem" data-toggle="buttons">
-                    <button type="button" class="btn" disabled>Group members by: </button>
-                    <label class="btn btn-primary active">
-                      <input type="radio" name="group-option" id="group-default" value="default" checked> Default
-                    </label>
-                    <label class="btn btn-primary">
-                      <input type="radio" name="group-option" id="group-gender" value="gender"> Gender
-                    </label>
-                    <label class="btn btn-primary">
-                      <input type="radio" name="group-option" id="group-race" value="race"> Race
-                    </label>
-                    <label class="btn btn-primary">
-                      <input type="radio" name="group-option" id="group-asianethnicity" value="asian_ethnicity"> Asian Ethnicity
-                    </label>
-                    <label class="btn btn-primary">
-                      <!-- TODO: implement grouping by age -->
-                      <input type="radio" name="group-option" id="group-age" value="default"> Age
-                    </label>
-                  </div>
-                  <div class="graph-control-btn">
-                    <input type="submit" class="btn btn-success" id="regroup-btn" value="Display Groups">
-                  </div>
-                  <div style="clear: both;"></div>
-                  <hr>
-
-                  <!-- Graph filter controls -->
-                  <h4>Filters</h4>
-                  <div class="graph-control-inline">
-                    <button type="button" class="btn" disabled>Gender: </button>
-                    <select id="gender-category" class="form-control">
-                      <option value="" selected>All genders</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                    </select>
-                  </div>
-                  <div class="graph-control-inline">
-                    <button type="button" class="btn" disabled>Race: </button>
-                    <select id="race-category" class="form-control">
-                      <option value="" selected>All races</option>
-                    </select>
-                  </div>
-                  <div class="graph-control-inline">
-                    <button type="button" class="btn" disabled>Asian Ethnicity: </button>
-                    <select id="asian-category" class="form-control">
-                      <option value="" selected>All asian ethnicities</option>
-                    </select>
-                  </div>
-                  <div class="graph-control-elem">
-                    <button type="button" class="btn" disabled>Age: </button>
-                    <input id="ageRangeSlider" type="text" value="">
-                    <strong>Age Range (years old): <span id="ageRangeVal">1 – 80+</span></strong>
-                  </div>
-                  <div class="graph-control-btn">
-                    <input type="submit" class="btn btn-danger" id="reset-filter-btn" value="Reset Filters">
-                  </div>
-                  <div style="clear: both;"></div>
-
-                  <input type="hidden" id="lastGroupOption" value="default">
-                  <input type="hidden" id="lastGenderFilter" value="default">
-                </div>
-              </div>
+    <div class="jumbotron">
+      <!-- Graph control overlay -->
+      <div class="container">
+        <div class="panel-group" id="accordion">
+          <div class="panel panel-default transparent">
+            <div class="panel-heading">
+              <h3 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion"
+                    href="#demographic-options">Demographics Graph</a>
+              </h3>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <div class="jumbotron graph-bg">
+            <div id="demographic-options" class="panel-collapse collapse">
+              <div class="panel-body">
+                <!-- Graph grouping controls -->
+                <div class="btn-group graph-control-elem" data-toggle="buttons">
+                  <button type="button" class="btn label-font" disabled>Group members by: </button>
+                  <label class="btn btn-primary active">
+                    <input type="radio" name="group-option" id="group-default" value="default" checked> Default
+                  </label>
+                  <label class="btn btn-primary">
+                    <input type="radio" name="group-option" id="group-gender" value="gender"> Gender
+                  </label>
+                  <label class="btn btn-primary">
+                    <input type="radio" name="group-option" id="group-race" value="race"> Race
+                  </label>
+                  <label class="btn btn-primary">
+                    <input type="radio" name="group-option" id="group-asianethnicity" value="asian_ethnicity"> Asian Ethnicity
+                  </label>
+                  <label class="btn btn-primary">
+                  <!-- TODO: implement grouping by age -->
+                    <input type="radio" name="group-option" id="group-age" value="default"> Age
+                  </label>
+                </div>
+
+                <input type="hidden" id="lastGroupOption" value="default">
+                <div class="graph-control-btn">
+                  <input type="submit" class="btn btn-success" id="regroup-btn" value="Display Groups">
+                </div>
+                <div style="clear: both;"></div>
+                <hr>
+
+                <!-- Graph filter controls -->
+                <h4>Filters</h4>
+                <div class="graph-control-inline">
+                  <button type="button" class="btn label-font" disabled>Gender: </button>
+                  <select id="gender-category" class="form-control">
+                    <option value="" selected>All genders</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </div>
+
+                <div class="graph-control-inline">
+                  <button type="button" class="btn label-font" disabled>Race: </button>
+                  <select id="race-category" class="form-control">
+                    <option value="" selected>All races</option>
+                  </select>
+                </div>
+
+                <div class="graph-control-inline">
+                  <button type="button" class="btn label-font" disabled>Asian Ethnicity: </button>
+                  <select id="asian-category" class="form-control">
+                    <option value="" selected>All asian ethnicities</option>
+                  </select>
+                </div>
+
+                <div class="graph-control-elem">
+                  <button type="button" class="btn label-font" disabled>Age: </button>
+                  <input id="ageRangeSlider" type="text" value="">
+                  <strong>Age Range (years old): <span id="ageRangeVal">1 – 80+</span></strong>
+                </div>
+
+                <div class="graph-control-btn">
+                  <input type="submit" class="btn btn-danger" id="reset-filter-btn" value="Reset Filters">
+                </div>
+                <div style="clear: both;"></div>
+              </div> <!-- end .panel-body -->
+            </div> <!-- end .panel-collapse -->
+          </div> <!-- end .panel -->
+        </div> <!-- end .panel-group #accordion -->
+      </div>
+      <!-- end .container -->
+
+      <!-- Graph visualization -->
+      <div>
         <div id="legend-box" class="legend">
           <h4>Groups:</h4>
           <div id="legend-groups"></div>
         </div>
         <div id="graph-container"></div>
+      </div>
     </div>
+    <!-- end .jumbotron .canvas -->
 {% endblock %}
 
 {% block custom-js %}
@@ -125,7 +133,7 @@
     <script src="{{ STATIC_URL }}js/sigma/plugins/sigma.layout.forceAtlas2.min.js"></script>
     <script src="{{ STATIC_URL }}js/plugins/bootstrap-slider.min.js"></script>
     <script>var graphData = {{ graph_json | safe }}</script>
-    <script>var demoColors = {{ colors_json | safe }}</script>
+    <script>var configData = {{ config_json | safe }}</script>
     <script src="{{ STATIC_URL }}js/taiko/demographic_graph.js"></script>
 {% endblock %}
 

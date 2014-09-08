@@ -6,33 +6,21 @@ var _ = {
 };
 var filter;
 
-function updateFilterControls(graph, filter) {
-  var raceCategories = {},
-      asianCategories = {};
 
-  // Get categories
-  graph.nodes().forEach(function(n) {
-    raceCategories[n.data['race']] = true;
-    asianCategories[n.data['asian_ethnicity']] = true;
-  })
-
+function renderFilterControls(filter) {
   // Add categories to appropriate select element
   var raceSelectElem = _.$('race-category');
-  Object.keys(raceCategories).forEach(function(c) {
-    if (c != 'None') {
-      var optionElem = document.createElement('option');
-      optionElem.text = c;
-      raceSelectElem.add(optionElem);
-    }
+  configData['race'].categories.forEach(function(c) {
+    var optionElem = document.createElement('option');
+    optionElem.text = c;
+    raceSelectElem.add(optionElem);
   });
 
   var asianSelectElem = _.$('asian-category');
-  Object.keys(asianCategories).forEach(function(c) {
-    if (c != 'None') {
-      var optionElem = document.createElement('option');
-      optionElem.text = c;
-      asianSelectElem.add(optionElem);
-    }
+  configData['asian_ethnicity'].categories.forEach(function(c) {
+    var optionElem = document.createElement('option');
+    optionElem.text = c;
+    asianSelectElem.add(optionElem);
   });
 
   // Reset button
@@ -50,9 +38,9 @@ function renderNodeGroups(s) {
     var groupOption = $("input:radio[name = 'group-option']:checked").val();
     var lastGroupOption = _.$('lastGroupOption').value;
 
-    if (groupOption != lastGroupOption) {
-      _recolorNodes(s, demoColors[groupOption], groupOption);
-      _drawGroupLegend(demoColors[groupOption], groupOption);
+    if (groupOption !== lastGroupOption) {
+      _recolorNodes(s, configData[groupOption].colors, groupOption);
+      _drawGroupLegend(configData[groupOption], groupOption);
       _.$('lastGroupOption').value = groupOption;
       s.refresh();
     }
@@ -65,33 +53,33 @@ function _recolorNodes(s, colors, group) {
       nodes = s.graph.nodes(),
       len = nodes.length;
 
-  if (group == 'default') {
+  if (group === 'default') {
     for (i = 0; i < len; i++) {
       nodes[i].color = colors[i % 5];
     }
   } else {
     for (i = 0; i < len; i++) {
-      nodes[i].color = colors[nodes[i].data[group]] || 'rgba(138, 138, 138, 0.7)';
+      nodes[i].color = colors[nodes[i].data[group]] || 'rgba(0, 0, 0, 0.8)';
     }
   }
 }
 
 
-function _drawGroupLegend(colors, groupOption) {
+function _drawGroupLegend(config, groupOption) {
   var box = _.$('legend-box');
   var group_div = _.$('legend-groups');
   group_div.innerHTML = '';
 
-  if (groupOption == 'default') {
+  if (groupOption === 'default') {
     box.style.display = 'none';
   } else {
     box.style.display = 'block';
-    for (var key in colors) {
-      group_div.innerHTML += '<div><div class="circle" ' +
-        'style="background: ' + colors[key] + ';"></div>' + key + '</div>\n';
-    }
-    group_div.innerHTML += '<div><div class="circle" style="background: ' +
-      'rgba(138, 138, 138, 0.7);"></div>No Data</div>';
+    config.categories.forEach(function(c) {
+      group_div.innerHTML += '<div><div class="node" ' +
+          'style="background: ' + config.colors[c] + ';"></div>' + c + '</div>\n';
+    });
+    group_div.innerHTML += '<div><div class="node" style="background: ' +
+      config.colors['None'] + ';"></div>No Data</div>';
   }
 }
 
@@ -109,17 +97,17 @@ function createSlider() {
     var startAge = e.value[0].toString();
     var endAge  = e.value[1].toString();
     var range = '';
-    if (startAge == '81') { startAge = '81+'; }
-    if (endAge == '81') { endAge = '80+'; }
+    if (startAge === '81') { startAge = '81+'; }
+    if (endAge === '81') { endAge = '80+'; }
 
-    if (startAge == endAge) {
+    if (startAge === endAge) {
       range = endAge;
     } else {
       range = startAge + ' – ' + endAge;
     }
 
     $('#ageRangeVal').text(range);
-    if (range == '1 – 80+') {
+    if (range === '1 – 80+') {
       $('#ageRangeVal').css('color', 'black');
     } else {
       $('#ageRangeVal').css('color', '#d9534f');
@@ -128,13 +116,15 @@ function createSlider() {
 }
 
 
-function setNodeSizeToDegree(s) {
+function setNodeProperties(s) {
   var i,
       nodes = s.graph.nodes(),
       len = nodes.length;
 
   for (i = 0; i < len; i++) {
     nodes[i].size = s.graph.degree(nodes[i].id);
+    nodes[i].x = Math.cos(2 * i * Math.PI / len) - Math.random();
+    nodes[i].y = Math.sin(2 * i * Math.PI / len) - Math.random();
   }
 }
 
@@ -153,7 +143,7 @@ function applyRaceFilter(e) {
   filter
     .undo('race-category')
     .nodesBy(function(n) {
-      return !c.length || n.data['race'] === c;
+      return !c.length || n.data['race'] === c || (c === 'Multiracial' && !(n.data['race'] in configData['race'].colors));
     }, 'race-category')
     .apply();
 }
@@ -163,7 +153,8 @@ function applyAsianEthnicityFilter(e) {
   filter
     .undo('asian-category')
     .nodesBy(function(n) {
-      return !c.length || n.data['asian_ethnicity'] === c;
+      var multiethnic = false;
+      return !c.length || n.data['asian_ethnicity'] === c || (c === 'Multiethnic' && !(n.data['asian_ethnicity'] in configData['asian_ethnicity'].colors));
     }, 'asian-category')
     .apply();
 }
@@ -190,10 +181,10 @@ $(document).ready(function() {
       edgeColor: 'default'
     }
   });
-  setNodeSizeToDegree(s);
+  setNodeProperties(s);
 
   filter = new sigma.plugins.filter(s);
-  updateFilterControls(s.graph, filter);
+  renderFilterControls(filter);
   _.$('gender-category').addEventListener('change', applyGenderFilter);
   _.$('race-category').addEventListener('change', applyRaceFilter);
   _.$('asian-category').addEventListener('change', applyAsianEthnicityFilter);
@@ -201,5 +192,7 @@ $(document).ready(function() {
   renderNodeGroups(s);
 
   s.refresh();
-  s.startForceAtlas2();
+  // s.startForceAtlas2();
+
+  // setTimeout(function() { s.stopForceAtlas2(); }, 300000);
 });

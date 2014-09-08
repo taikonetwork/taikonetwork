@@ -30,3 +30,8 @@ body {
 .panel-heading a.collapsed:after {
   content: "\e080";
 }
+
+.label-font {
+  color: black;
+  font-weight: 700;
+}
