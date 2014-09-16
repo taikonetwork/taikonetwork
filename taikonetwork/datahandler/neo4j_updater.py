@@ -1,5 +1,5 @@
 ##################################################################
-# _neo4j_updater.py
+# neo4j_updater.py
 # ------------------
 # Methods for syncing NEO4J nodes and relationships via
 # Cypher transactions.

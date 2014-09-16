@@ -15,7 +15,6 @@
               <ul class="dropdown-menu" role="menu">
                 <li><a href="/graphs/network/">Network Graph</a></li>
                 <li class="active"><a href="/graphs/demographic/">Demographics Graph</a></li>
-                <li><a href="/graphs/membership/">Membership Graph</a></li>
                 <li><a href="/graphs/connection/">Find Connections</a></li>
                 <li><a href="/graphs/degree/">Degrees of Separation</a></li>
               </ul>
@@ -57,7 +56,7 @@
                     <input type="radio" name="group-option" id="group-race" value="race"> Race
                   </label>
                   <label class="btn btn-primary">
-                    <input type="radio" name="group-option" id="group-asianethnicity" value="asian_ethnicity"> Asian Ethnicity
+                    <input type="radio" name="group-option" id="group-asianethnicity" value="ethnicity"> Asian Ethnicity
                   </label>
                   <label class="btn btn-primary">
                   <!-- TODO: implement grouping by age -->
@@ -129,10 +128,10 @@
 {% block custom-js %}
     <!-- sigma.js -->
     <script src="{{ STATIC_URL }}js/sigma/sigma.min.js"></script>
+    <script src="{{ STATIC_URL }}js/sigma/plugins/sigma.parsers.json.min.js"></script>
     <script src="{{ STATIC_URL }}js/sigma/plugins/sigma.plugins.filter.min.js"></script>
-    <script src="{{ STATIC_URL }}js/sigma/plugins/sigma.layout.forceAtlas2.min.js"></script>
     <script src="{{ STATIC_URL }}js/plugins/bootstrap-slider.min.js"></script>
-    <script>var graphData = {{ graph_json | safe }}</script>
+    <script>var graphData = "{{ STATIC_URL }}data/demographic_graph.json"</script>
     <script>var configData = {{ config_json | safe }}</script>
     <script src="{{ STATIC_URL }}js/taiko/demographic_graph.js"></script>
 {% endblock %}

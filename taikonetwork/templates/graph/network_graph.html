@@ -14,7 +14,6 @@
               <ul class="dropdown-menu" role="menu">
                 <li class="active"><a href="/graphs/network/">Network Graph</a></li>
                 <li><a href="/graphs/demographic/">Demographics Graph</a></li>
-                <li><a href="/graphs/membership/">Membership Graph</a></li>
                 <li><a href="/graphs/connection/">Find Connections</a></li>
                 <li><a href="/graphs/degree/">Degrees of Separation</a></li>
               </ul>
@@ -46,24 +45,6 @@
                 <span class="glyphicon glyphicon-info-sign icon-sep"></span>
                 More about this visualization</a>
         </div>
-        <div class="modal fade" id="vizInfoModal" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span>
-                    <span class="sr-only">Close</span></button>
-                <h5 class="modal-title" id="infoModalLabel">About this graph visualization</h5>
-              </div>
-              <div class="modal-body">
-               This graph shows connections among members of the Taiko community.
-               The size of a node indicates how many connections it has.
-               You can zoom in to see labels (via scrolling or touchpad),
-               hover over a node, or search for a name in the search box.
-               Clicking on a node will display only that node's immediate connections.
-              </div>
-            </div><!-- /.modal-content -->
-          </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
 
         <div>
             <h4>Legend:</h4>
@@ -74,26 +55,24 @@
 
         <div>
           <h4>Search:</h4>
-          <form role="search">
             <div id="search-input" class="input-group">
                 <input type="text" class="form-control" placeholder="Search by name" value="" id="search-term" onfocus="clearSearch();">
                 <div class="input-group-btn">
-                    <button id="search-btn" class="btn btn-default" type="submit">
+                    <button id="search-btn" class="btn btn-default">
                         <i class="glyphicon glyphicon-search"></i></button>
                 </div>
             </div>
-          </form>
         </div>
 
-        <div id="search-results" class="hidden"></div>
+        <div id="search-results"></div>
       </div> <!-- end .control-pane -->
 
-      <div id="info-exit-btn" class="hidden">
+      <div id="info-exit-btn">
           <a href="javascript:void(0)" onclick="resetGraphCanvas();" data-toggle="tooltip" title="Return to the full network">
               <span class="glyphicon glyphicon-remove-circle info-exit-icon"></span></a>
       </div>
 
-      <div id="info-pane" class="hidden">
+      <div id="info-pane">
           <h3 class="underline">Node Information</h3>
           <div id="info-profile"></div>
           <span class="line"></span>
@@ -105,13 +84,33 @@
 
       </div> <!-- end .info-pane -->
     </div> <!-- end .jumbotron canvas -->
+
+    <div class="modal fade" id="vizInfoModal" role="dialog" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span>
+                <span class="sr-only">Close</span></button>
+            <h5 class="modal-title" id="infoModalLabel">About this graph visualization</h5>
+          </div>
+          <div class="modal-body">
+               This graph shows connections among members of the Taiko community.
+               The size of a node indicates how many connections it has.
+               You can zoom in to see labels (via scrolling or touchpad),
+               hover over a node, or search for a name in the search box.
+               Clicking on a node will display only that node's immediate connections.
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 {% endblock %}
 
 {% block custom-js %}
     <!-- sigma.js -->
     <script src="{{ STATIC_URL }}js/sigma/sigma.min.js"></script>
+    <script src="{{ STATIC_URL }}js/sigma/plugins/sigma.parsers.json.min.js"></script>
     <script src="{{ STATIC_URL }}js/sigma/plugins/sigma.plugins.filter.min.js"></script>
-    <script>var graphData = {{ graph_json | safe }}</script>
+    <script>var graphData = "{{ STATIC_URL }}data/network_graph.json"</script>
     <script src="{{ STATIC_URL }}js/taiko/network_graph.js"></script>
 {% endblock %}
 
