@@ -131,13 +131,10 @@ h3.underline {
 }
 #search-results {
   max-height: 300px;
+  display: none;
 }
 #search-results li {
   text-decoration: none;
-}
-.hidden {
-  display: none;
-  visibility: hidden;
 }
 
 #info-pane {
@@ -148,6 +145,7 @@ h3.underline {
   width: 250px;
   background-color: #fbfbfb;
   box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  display: none;
 }
 #info-pane > div {
   margin: 10px;
@@ -162,6 +160,9 @@ h3.underline {
 }
 #info-connections-list {
   max-height: 480px;
+}
+#info-exit-btn {
+  display: none;
 }
 .info-exit-icon {
   position: absolute;

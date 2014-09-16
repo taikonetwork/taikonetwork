@@ -17,7 +17,7 @@ function renderFilterControls(filter) {
   });
 
   var asianSelectElem = _.$('asian-category');
-  configData['asian_ethnicity'].categories.forEach(function(c) {
+  configData['ethnicity'].categories.forEach(function(c) {
     var optionElem = document.createElement('option');
     optionElem.text = c;
     asianSelectElem.add(optionElem);
@@ -55,11 +55,11 @@ function _recolorNodes(s, colors, group) {
 
   if (group === 'default') {
     for (i = 0; i < len; i++) {
-      nodes[i].color = colors[i % 5];
+      nodes[i].color = colors[i % 12];
     }
   } else {
     for (i = 0; i < len; i++) {
-      nodes[i].color = colors[nodes[i].data[group]] || 'rgba(0, 0, 0, 0.8)';
+      nodes[i].color = colors[nodes[i].attributes[group]] || 'rgba(0, 0, 0, 0.8)';
     }
   }
 }
@@ -115,7 +115,6 @@ function createSlider() {
   });
 }
 
-
 function setNodeProperties(s) {
   var i,
       nodes = s.graph.nodes(),
@@ -123,8 +122,16 @@ function setNodeProperties(s) {
 
   for (i = 0; i < len; i++) {
     nodes[i].size = s.graph.degree(nodes[i].id);
-    nodes[i].x = Math.cos(2 * i * Math.PI / len) - Math.random();
-    nodes[i].y = Math.sin(2 * i * Math.PI / len) - Math.random();
+  }
+}
+
+function setEdgeProperties(s) {
+  var i,
+      edges = s.graph.edges(),
+      len = edges.length;
+
+  for (i = 0; i < len; i++) {
+    edges[i].type = 'curve';
   }
 }
 
@@ -133,7 +140,7 @@ function applyGenderFilter(e) {
   filter
     .undo('gender-category')
     .nodesBy(function(n) {
-      return !c.length || n.data['gender'] === c;
+      return !c.length || n.attributes['gender'] === c;
     }, 'gender-category')
     .apply();
 }
@@ -143,7 +150,7 @@ function applyRaceFilter(e) {
   filter
     .undo('race-category')
     .nodesBy(function(n) {
-      return !c.length || n.data['race'] === c || (c === 'Multiracial' && !(n.data['race'] in configData['race'].colors));
+      return !c.length || n.attributes['race'] === c || (c === 'Multiracial' && !(n.attributes['race'] in configData['race'].colors));
     }, 'race-category')
     .apply();
 }
@@ -154,7 +161,7 @@ function applyAsianEthnicityFilter(e) {
     .undo('asian-category')
     .nodesBy(function(n) {
       var multiethnic = false;
-      return !c.length || n.data['asian_ethnicity'] === c || (c === 'Multiethnic' && !(n.data['asian_ethnicity'] in configData['asian_ethnicity'].colors));
+      return !c.length || n.attributes['ethnicity'] === c || (c === 'Multiethnic' && !(n.attributes['ethnicity'] in configData['ethnicity'].colors));
     }, 'asian-category')
     .apply();
 }
@@ -163,36 +170,37 @@ function applyAsianEthnicityFilter(e) {
 $(document).ready(function() {
   createSlider();
 
-  s = new sigma({
-    graph: graphData,
-    container: 'graph-container',
-    renderer: {
-      container: _.$('graph-container'),
-      type: 'canvas'
+  sigma.parsers.json(graphData,
+    {
+      container: 'graph-container',
+      renderer: {
+        container: _.$('graph-container'),
+        type: 'canvas'
+      },
+      settings: {
+        minNodeSize: 2,
+        maxNodeSize: 8,
+        minEdgeSize: 0.3,
+        maxEdgeSize: 0.5,
+        zoomingRatio: 1.3,
+        drawLabels: false,
+        batchEdgesDrawing: true,
+        edgeColor: 'default'
+      }
     },
-    settings: {
-      minNodeSize: 2,
-      maxNodeSize: 12,
-      minEdgeSize: 0.3,
-      maxEdgeSize: 0.3,
-      zoomingRatio: 1.3,
-      drawLabels: false,
-      drawEdges: false,
-      edgeColor: 'default'
+    function(s) {
+      setNodeProperties(s);
+      setEdgeProperties(s);
+
+      filter = new sigma.plugins.filter(s);
+      renderFilterControls(filter);
+      _.$('gender-category').addEventListener('change', applyGenderFilter);
+      _.$('race-category').addEventListener('change', applyRaceFilter);
+      _.$('asian-category').addEventListener('change', applyAsianEthnicityFilter);
+
+      renderNodeGroups(s);
+
+      s.refresh();
     }
-  });
-  setNodeProperties(s);
-
-  filter = new sigma.plugins.filter(s);
-  renderFilterControls(filter);
-  _.$('gender-category').addEventListener('change', applyGenderFilter);
-  _.$('race-category').addEventListener('change', applyRaceFilter);
-  _.$('asian-category').addEventListener('change', applyAsianEthnicityFilter);
-
-  renderNodeGroups(s);
-
-  s.refresh();
-  // s.startForceAtlas2();
-
-  // setTimeout(function() { s.stopForceAtlas2(); }, 300000);
+  );
 });
