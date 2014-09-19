@@ -1,9 +1,9 @@
 {% extends "base-explore.html" %}
 
-{% block title %}Taiko Network: Find Connections{% endblock %}
+{% block title %}Taiko Network: Degrees of Separation{% endblock %}
 
 {% block custom-css %}
-<link href="#" rel="stylesheet">
+<link href="{{ STATIC_URL }}css/graph-custom.css" rel="stylesheet">
 {% endblock %}
 
 {% block navbar-active %}
@@ -14,8 +14,7 @@
               <ul class="dropdown-menu" role="menu">
                 <li><a href="/graphs/network/">Network Graph</a></li>
                 <li><a href="/graphs/demographic/">Demographics Graph</a></li>
-                <li class="active"><a href="/graphs/connection/">Find Connections</a></li>
-                <li><a href="/graphs/degree/">Degrees of Separation</a></li>
+                <li class="active"><a href="/graphs/connection/">Degrees of Separation</a></li>
               </ul>
             </li>
             <li class="dropdown">
@@ -28,24 +27,111 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-          <div class="panel-group" id="accordion">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion"
-                      href="#connections-input">Find Connections</a>
-                </h4>
-              </div>
-              <div id="connections-input" class="panel-collapse collapse in">
-                <div class="panel-body">
-                    <p>Find the path (if it exists) that connects any
-                        two members of the taiko community.</p>
-                    <p>Enter the first and last name of the members.</p>
-                </div>
-              </div>
+    <div class="jumbotron">
+      <!-- Graph control overlay -->
+      <div class="container">
+        <div class="panel-group" id="accordion">
+          <div class="panel panel-default transparent">
+            <div class="panel-heading">
+              <h3 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion"
+                    href="#connections-control">Degrees of Separation</a>
+              </h3>
             </div>
+
+            <div id="connections-control" class="panel-collapse">
+              <div class="panel-body">
+                <div id="form-error-alert" class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
+                  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                  <strong>Error:</strong> All fields are required.
+                </div>
+                <p>Search for a path that connects:</p>
+
+                <form class="form-inline" role="form" id="connections-form" action="/" method="GET">
+                  <div class="form-group" id="fg-first1">
+                    <label class="sr-only" for="firstname1">First Name</label>
+                    <input type="text" class="form-control" id="firstname1" placeholder="First Name" onfocus="clearInput(this.id);">
+                  </div>
+                  <div class="form-group" id="fg-last1">
+                    <label class="sr-only" for="lastname1">Last Name</label>
+                    <input type="text" class="form-control" id="lastname1" placeholder="Last Name" onfocus="clearInput(this.id);">
+                  </div>
+                  <p class="control-text-spacing">and</p>
+                  <div class="form-group" id="fg-first2">
+                    <label class="sr-only" for="firstname2">First Name</label>
+                    <input type="text" class="form-control" id="firstname2" placeholder="First Name" onfocus="clearInput(this.id);">
+                  </div>
+                  <div class="form-group" id="fg-last2">
+                    <label class="sr-only" for="lastname2">Last Name</label>
+                    <input type="text" class="form-control" id="lastname2" placeholder="Last Name" onfocus="clearInput(this.id);"> .
+                  </div>
+                  <br>
+                  <div class="graph-control-btn">
+                      <button type="submit" class="btn btn-success">Search</button>
+                  </div>
+
+                  <div class="info-link">
+                    <div class="graph-control-elem">
+                      <div>
+                        <a href="#" data-toggle="modal" data-target="#connectInfoModal">
+                        <span class="glyphicon glyphicon-info-sign icon-sep"></span>
+                        Additional information: 'Degrees of Separation'</a>
+                      </div>
+                    </div>
+                  </div>
+                </form> <!-- end form -->
+              </div> <!-- end .panel-body -->
+            </div> <!-- end .panel-collapse -->
+          </div> <!-- end .panel -->
+        </div> <!-- end .panel-group #accordion -->
+      </div>
+      <!-- end .container -->
+
+      <!-- Graph visualization -->
+      <div>
+        {% if error_msg %}
+          <div id="form-error-alert" class="alert alert-danger" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span>
+                <span class="sr-only">Close</span></button>
+            <strong>ERROR:</strong>{{ error_msg | safe }}
           </div>
-    </div>
+        {% endif %}
+
+        <div id="graph-container"></div>
+      </div>
+    </div> <!-- end .jumbotron .canvas -->
+
+    <div class="modal fade" id="connectInfoModal" role="dialog" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span>
+                <span class="sr-only">Close</span></button>
+            <h5 class="modal-title" id="infoModalLabel">Additional information: 'Degrees of Separation'</h5>
+          </div>
+          <div class="modal-body">
+               This graph visualization shows the shortest path (if it exists)
+               between any two members of the Taiko community.
+               <br><br>
+               A direct connection (path length=1) exists between two members if
+               they were both associated with the same Taiko group during an overlapping time period.
+               <br>
+               The 'Degrees of Separation' is the length of the path or the number of steps it takes to
+               reach from one member to another. This visualization seeks to examine
+               the "six degrees of separation" theory that states everyone is
+               six or fewer steps away from any other person (within the confines
+               of the Taiko Network).
+               <br><br>
+               Input the first name and last name (required) of any two members to search.
+               <br>
+               Double clicking on a node in the resulting visualization will
+               expand the node and display information about the node.
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 {% endblock %}
 
+{% block custom-js %}
+    <script src="{{ STATIC_URL }}js/taiko/connections.js"></script>
+{% endblock %}

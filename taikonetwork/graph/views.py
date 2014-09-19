@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.core.serializers.json import DjangoJSONEncoder
 
-from py2neo import cypher, neo4j
-from taikonetwork.neo4j_settings import NEO4J_ROOT_URI, NEO4J_DB_URI
+from py2neo import cypher
+from taikonetwork.neo4j_settings import NEO4J_ROOT_URI
 
 import random
 import json
@@ -20,11 +20,72 @@ def demographic_graph(request):
 
 
 def connection_graph(request):
-    return render(request, 'graph/connection.html')
+    return render(request, 'graph/connections.html')
 
 
-def degree_graph(request):
-    return render(request, 'graph/degree.html')
+def find_path(request):
+    path_str = ("MATCH p=shortestPath( "
+                "(a:Member {{firstname: '{0}', lastname: '{1}'}})"
+                "-[r:CONNECTED_TO*]-"
+                "(b:Member {{firstname: '{2}', lastname: '{3}'}}) ) "
+                "RETURN nodes(p), rels(p)")
+
+    if request.method == 'GET':
+        first1 = request.GET['firstname1'].title()
+        last1 = request.GET['lastname1'].title()
+        first2 = request.GET['firstname2'].title()
+        last2 = request.GET['lastname2'].title()
+
+        query = path_str.format(first1, last1, first2, last2)
+        results = query_neo4j_db(query)
+
+        if results:
+            nodes_json = []
+            edges_json = []
+            for result in results:
+                nodes = result.values[0]
+                edges = result.values[1]
+
+                for n in nodes:
+                    data = n.get_cached_properties()
+                    color = 3
+                    if data['firstname'] == first1 and data['lastname'] == last1:
+                        color = 1
+                    elif data['firstname'] == first2 and data['lastname'] == last2:
+                        color = 2
+
+                    node = {'id': data['sf_id'],
+                            'label': data['firstname'] + ' ' + data['lastname'],
+                            'color': color}
+                    nodes_json.append(node)
+
+                for e in edges:
+                    data = e.get_cached_properties()
+                    edge = {'source': ['_a_id'],
+                            'target': ['_b_id'],
+                            'label': data['group']}
+                    edges_json.append(edge)
+
+            graph = {'nodes': nodes_json, 'edges': edges_json}
+            graph_json = json.dumps(graph, cls=DjangoJSONEncoder)
+            degrees = len(edges_json)
+
+            return render(request, 'graph/connections.html',
+                          {'graph_json': graph_json, 'degrees': degrees})
+        else:
+            error_msg = "No path connecting <strong>'{} [}'</strong> and <strong>'{} {}'</strong> was found.".format(
+                first1, last1, first2, last2)
+            return render(request, 'graph.connections/html', {'error_msg': error_msg})
+    else:
+        error_msg = 'Unexpected error encountered. Please try again.'
+        return render(request, 'graph/connections.html', {'error_msg': error_msg})
+
+
+# def find_all_connections(request):
+#     six_degrees_str = ("MATCH (m:Member {{firstname: '{0}', lastname: '{1}'}})"
+#                        "-[r:CONNECTED_TO*..6]-(n:Member) RETURN DISTINCT n LIMIT 100")
+#     children_str = ("MATCH (m:Member {{firstname: '{0}', lastname: '{1}'}})"
+#                     "-[r:CONNECTED_TO]-(n:Member) RETURN n.firstname, n.lastname LIMIT 15")
 
 
 # ----------------------------------------------------------
@@ -188,5 +249,3 @@ def random_color(obj_id, alpha):
               "rgba(157, 2, 253, "]
 
     return colors[obj_id % 12] + str(alpha) + ')'
-
-

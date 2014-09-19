@@ -173,3 +173,12 @@ h3.underline {
   background: #f8f8f8;
   border-radius: 50%;
 }
+
+.control-text-spacing {
+    display: inline;
+    margin-left:10px;
+    margin-right:10px;"
+}
+.info-link {
+  margin-top: 15px;
+}

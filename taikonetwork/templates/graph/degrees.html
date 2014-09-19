@@ -1,9 +1,9 @@
 {% extends "base-explore.html" %}
 
-{% block title %}Taiko Network: Find Connections{% endblock %}
+{% block title %}Taiko Network: Degrees of Separation{% endblock %}
 
 {% block custom-css %}
-<link href="#" rel="stylesheet">
+<link href="{{ STATIC_URL }}css/graph-custom.css" rel="stylesheet">
 {% endblock %}
 
 {% block navbar-active %}
@@ -28,24 +28,92 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-          <div class="panel-group" id="accordion">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title">
-                  <a data-toggle="collapse" data-parent="#accordion"
-                      href="#connections-input">Find Connections</a>
-                </h4>
-              </div>
-              <div id="connections-input" class="panel-collapse collapse in">
-                <div class="panel-body">
-                    <p>Find the path (if it exists) that connects any
-                        two members of the taiko community.</p>
-                    <p>Enter the first and last name of the members.</p>
-                </div>
-              </div>
+    <div class="jumbotron">
+      <!-- Graph control overlay -->
+      <div class="container">
+        <div class="panel-group" id="accordion">
+          <div class="panel panel-default transparent">
+            <div class="panel-heading">
+              <h3 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion"
+                    href="#degrees-control">Degrees of Separation</a>
+              </h3>
             </div>
+
+            <div id="degrees-control" class="panel-collapse collapse">
+              <div class="panel-body">
+                <div id="form-error-alert" class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
+                  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                  <strong>Error:</strong> All fields are required.
+                </div>
+
+                <form class="form-inline" role="form" id="degrees-form" action="/" method="GET">
+                  <button type="button" class="btn label-font" disabled>Member: </button>
+                  <div class="form-group" id="fg-degree-first">
+                    <label class="sr-only" for="firstname">First Name</label>
+                    <input type="text" class="form-control" id="firstname" placeholder="First Name" onfocus="clearInput(this.id);">
+                  </div>
+                  <div class="form-group" id="fg-degree-last">
+                    <label class="sr-only" for="lastname">Last Name</label>
+                    <input type="text" class="form-control" id="lastname" placeholder="Last Name" onfocus="clearInput(this.id);">
+                  </div>
+                  
+                  <div class="form-group graph-control-btn">
+                      <button type="submit" class="btn btn-success">Search</button>
+                  </div>
+
+                  <div class="info-link">
+                    <div class="graph-control-elem">
+                      <div>
+                        <a href="#" data-toggle="modal" data-target="#degreeInfoModal">
+                        <span class="glyphicon glyphicon-info-sign icon-sep"></span>
+                        Additional information: 'Degrees of Separation'</a>
+                      </div>
+                    </div>
+                  </div>
+                </form> <!-- end form -->
+
+              </div> <!-- end .panel-body -->
+            </div> <!-- end .panel-collapse -->
+          </div> <!-- end .panel -->
+        </div> <!-- end .panel-group #accordion -->
+      </div>
+      <!-- end .container -->
+
+      <!-- Graph visualization -->
+      <div>
+        <div id="graph-container"></div>
+      </div>
+    </div> <!-- end .jumbotron .canvas -->
+
+    <div class="modal fade" id="degreeInfoModal" role="dialog" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span>
+                <span class="sr-only">Close</span></button>
+            <h5 class="modal-title" id="infoModalLabel">Additional information: 'Degrees of Separation'</h5>
           </div>
-    </div>
+          <div class="modal-body">
+               This graph visualization shows all connections a member has in the Taiko Network.
+               <br>
+               It is loosely based on the "six degrees of separation" theory that
+               states everyone is six or fewer steps away from any other person
+               (although we do not limit the number of degrees).
+               <br>
+               For our purposes, a direct connection or "step" (path length=1) exists between two members if
+               they were both associated with the same Taiko group during an overlapping time period.
+               <br><br>
+               Input the first name and last name (required) of any member in the Taiko Network to find all connections.
+               <br>
+               Double clicking on a node in the resulting visualization will
+               expand the node and display additional connections (if they exist).
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 {% endblock %}
 
+{% block custom-js %}
+    <script src="{{ STATIC_URL }}js/taiko/degrees.js"></script>
+{% endblock %}
