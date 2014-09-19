@@ -1,11 +1,4 @@
-// DOM utility function
-var _ = {
-  $: function (id) {
-    return document.getElementById(id);
-  }
-};
 var filter;
-
 
 function renderFilterControls(filter) {
   // Add categories to appropriate select element
