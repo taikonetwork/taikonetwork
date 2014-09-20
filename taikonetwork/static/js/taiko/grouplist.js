@@ -8,6 +8,7 @@ function drawGroupList() {
   var data = new google.visualization.DataTable();
   data.addColumn('string', 'Name');
   data.addColumn('string', 'Type');
+  data.addColumn('string', 'Website');
   data.addColumn('string', 'City');
   data.addColumn('string', 'State/Province');
   data.addColumn('string', 'Country');
@@ -22,7 +23,7 @@ function drawGroupList() {
       year = {v: new Date(groups[i]['year'], 1, 1),
               f: groups[i]['year'].toString()};
     }
-    groupdata = [groups[i]['name'], groups[i]['category'],
+    groupdata = [groups[i]['name'], groups[i]['category'], groups[i]['website'],
                  groups[i]['city'], groups[i]['state'], groups[i]['country'],
                  year];
     data.addRow(groupdata);

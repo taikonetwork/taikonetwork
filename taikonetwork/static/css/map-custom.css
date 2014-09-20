@@ -11,6 +11,14 @@
   width: 252px;
 }
 
+.table-container {
+  width: 80%;
+  margin: auto;
+}
+
 .figure-title {
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 800;
   text-align: center;
+  margin-top: 0;
 }
