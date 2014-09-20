@@ -18,13 +18,7 @@
                 <li class="active"><a href="/graphs/degree/">Degrees of Separation</a></li>
               </ul>
             </li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Metrics<span class="caret"></span></a>
-              <ul class="dropdown-menu" role="menu">
-                <li><a href="/metrics/ranking/">Ranking</a></li>
-                <li><a href="/metrics/centrality/">Centrality</a></li>
-              </ul>
-            </li>
+            <li><a href="/metrics/">Metrics</a></li>
 {% endblock %}
 
 {% block content %}
@@ -57,7 +51,7 @@
                     <label class="sr-only" for="lastname">Last Name</label>
                     <input type="text" class="form-control" id="lastname" placeholder="Last Name" onfocus="clearInput(this.id);">
                   </div>
-                  
+
                   <div class="form-group graph-control-btn">
                       <button type="submit" class="btn btn-success">Search</button>
                   </div>

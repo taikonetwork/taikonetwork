@@ -5,7 +5,7 @@ import sys
 import math
 
 from datahandler.models import Group, Member, Membership, SyncInfo
-from datahandler.neo4j_updater import Neo4jUpdater
+from datahandler.tools.neo4j_updater import Neo4jUpdater
 
 
 class Command(BaseCommand):
