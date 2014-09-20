@@ -20,6 +20,11 @@ body {
   margin-right: 5px;
 }
 
+.icon-sep2 {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 .panel-heading a:after {
   font-family: 'Glyphicons Halflings';
   content: "\e114";

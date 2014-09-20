@@ -47,7 +47,7 @@
                 </div>
                 <p>Search for a path that connects:</p>
 
-                <form class="form-inline" role="form" id="connections-form" action="/" method="GET">
+                <form class="form-inline" role="form" id="connections-form" action="javascript:processQuery()" method="GET">
                   <div class="form-group" id="fg-first1">
                     <label class="sr-only" for="firstname1">First Name</label>
                     <input type="text" class="form-control" id="firstname1" placeholder="First Name" onfocus="clearInput(this.id);">
@@ -84,19 +84,16 @@
             </div> <!-- end .panel-collapse -->
           </div> <!-- end .panel -->
         </div> <!-- end .panel-group #accordion -->
-      </div>
-      <!-- end .container -->
+
+        <div id="query-error" class="alert alert-danger message" role="alert" style="display:none;">
+        </div>
+        <div id="query-success" class="alert alert-info message" role="alert" style="display:none;">
+        </div>
+
+      </div><!-- end .container -->
 
       <!-- Graph visualization -->
       <div>
-        {% if error_msg %}
-          <div id="form-error-alert" class="alert alert-danger" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span>
-                <span class="sr-only">Close</span></button>
-            <strong>ERROR:</strong>{{ error_msg | safe }}
-          </div>
-        {% endif %}
-
         <div id="graph-container"></div>
       </div>
     </div> <!-- end .jumbotron .canvas -->
@@ -133,5 +130,6 @@
 {% endblock %}
 
 {% block custom-js %}
+    <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="{{ STATIC_URL }}js/taiko/connections.js"></script>
 {% endblock %}

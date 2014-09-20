@@ -175,10 +175,58 @@ h3.underline {
 }
 
 .control-text-spacing {
-    display: inline;
-    margin-left:10px;
-    margin-right:10px;"
+  display: inline;
+  margin-left:10px;
+  margin-right:10px;"
 }
 .info-link {
   margin-top: 15px;
+}
+
+.message {
+  position: relative;
+  margin-top: 30px;
+  width: 64%;
+  margin-left: -32%;
+  left: 50%;
+  padding: 8px;
+  text-align: center;
+}
+
+.node {
+  cursor: move;
+  fill: #ccc;
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+.node.fixed {
+  fill: #1f77b4;
+}
+.nodelabel {
+  font: 16px sans-serif;
+  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+}
+.link {
+  stroke: #000;
+  stroke-width: 1.5px;
+  pointer-events: none;
+}
+.edgepath {
+  fill: blue;
+  fill-opacity: 0;
+  stroke: red;
+  stroke-opacity: 0;
+  pointer-events: none;
+}
+.edgelabel {
+  font: 18px sans-serif;
+  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+  pointer-events: none;
+}
+svg {
+    display: block;
+    width: 90%;
+    height: 80%;
+    margin: 0 auto;
+    margin-top: 150px;
 }
