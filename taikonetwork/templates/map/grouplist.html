@@ -3,7 +3,7 @@
 {% block title %}Taiko Network: Groups{% endblock %}
 
 {% block custom-css %}
-<link href="{{ STATIC_URL }}css/map-custom.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/map-custom.css" rel="stylesheet">
 {% endblock %}
 
 {% block navbar-active %}
@@ -55,6 +55,6 @@
 {% block custom-js %}
     <!-- Load Google AJAX API -->
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript">var groups = {{ groups_json | safe }}</script>
+    <script type="text/javascript">var groups = {{ groups_json | safe }};</script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/taiko/grouplist.js"></script>
 {% endblock %}

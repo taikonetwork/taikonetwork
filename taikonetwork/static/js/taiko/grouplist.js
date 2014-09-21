@@ -13,7 +13,7 @@ function drawGroupList() {
   data.addColumn('string', 'State/Province');
   data.addColumn('string', 'Country');
   data.addColumn('date', 'Founding Year');
-  
+
   var i, year, groupdata;
   var numGroups = groups.length;
   for (i = 0; i < numGroups; i++) {
@@ -30,7 +30,7 @@ function drawGroupList() {
   };
 
   var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div'));
-  
+
   var nameFilter = new google.visualization.ControlWrapper({
     controlType: 'StringFilter',
     containerId: 'name_filter_div',
@@ -87,7 +87,7 @@ function drawGroupList() {
       }
     }
   });
-  
+
   var rangeFilter = new google.visualization.ControlWrapper({
     controlType: 'DateRangeFilter',
     containerId: 'range_filter_div',

@@ -3,7 +3,7 @@
 {% block title %}Taiko Network: Network Graph{% endblock %}
 
 {% block custom-css %}
-<link href="{{ STATIC_URL }}css/graph-custom.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/graph-custom.css" rel="stylesheet">
 {% endblock %}
 
 {% block navbar-active %}
@@ -103,7 +103,7 @@
     <script src="{{ STATIC_URL }}js/sigma/sigma.min.js"></script>
     <script src="{{ STATIC_URL }}js/sigma/plugins/sigma.parsers.json.min.js"></script>
     <script src="{{ STATIC_URL }}js/sigma/plugins/sigma.plugins.filter.min.js"></script>
-    <script>var graphData = "{{ STATIC_URL }}data/network_graph.json"</script>
+    <script>var graphData = "{{ STATIC_URL }}data/network_graph.json";</script>
     <script src="{{ STATIC_URL }}js/taiko/network_graph.js"></script>
 {% endblock %}
 

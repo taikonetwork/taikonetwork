@@ -3,7 +3,7 @@
 {% block title %}Taiko Network: Map{% endblock %}
 
 {% block custom-css %}
-<link href="{{ STATIC_URL }}css/map-custom.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/map-custom.css" rel="stylesheet">
 {% endblock %}
 
 {% block navbar-active %}
@@ -17,11 +17,21 @@
                 <li><a href="/graphs/connection/">Degrees of Separation</a></li>
               </ul>
             </li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Metrics<span class="caret"></span></a>
-              <ul class="dropdown-menu" role="menu">
-                <li><a href="/metrics/ranking/">Ranking</a></li>
-                <li><a href="/metrics/centrality/">Centrality</a></li>
-              </ul>
-            </li>
+            <li><a href="/metrics/">Metrics</a></li>
+{% endblock %}
+
+{% block content %}
+    <div id="container">
+
+    </div>
+    
+    <div id="map-container"></div>
+{% endblock %}
+
+{% block custom-js %}
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.1.0/topojson.min.js"></script>
+    <script>var worldMapData = "{{ STATIC_URL }}data/world-topo-min.json";</script>
+    <script>var groups = {{ groups_json | safe }};</script>
+    <script src="{{ STATIC_URL }}js/taiko/groupmap.js"></script>
 {% endblock %}

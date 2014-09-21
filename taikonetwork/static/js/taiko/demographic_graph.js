@@ -1,5 +1,6 @@
 var filter;
 
+
 function renderFilterControls(filter) {
   // Add categories to appropriate select element
   var raceSelectElem = _.$('race-category');
@@ -196,4 +197,5 @@ $(document).ready(function() {
       s.refresh();
     }
   );
+
 });

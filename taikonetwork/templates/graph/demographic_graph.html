@@ -124,8 +124,8 @@
     <script src="{{ STATIC_URL }}js/sigma/plugins/sigma.parsers.json.min.js"></script>
     <script src="{{ STATIC_URL }}js/sigma/plugins/sigma.plugins.filter.min.js"></script>
     <script src="{{ STATIC_URL }}js/plugins/bootstrap-slider.min.js"></script>
-    <script>var graphData = "{{ STATIC_URL }}data/demographic_graph.json"</script>
-    <script>var configData = {{ config_json | safe }}</script>
+    <script>var graphData = "{{ STATIC_URL }}data/demographic_graph.json";</script>
+    <script>var configData = {{ config_json | safe }};</script>
     <script src="{{ STATIC_URL }}js/taiko/demographic_graph.js"></script>
 {% endblock %}
 

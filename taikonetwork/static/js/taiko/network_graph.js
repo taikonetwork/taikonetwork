@@ -1,6 +1,20 @@
 var s,
     filter;
 
+// Add a method to the graph model that returns an
+// object with every neighbors of a node inside:
+sigma.classes.graph.addMethod('neighbors', function(id) {
+  if (typeof id !== 'string')
+        throw 'neighbors: the node id must be a string.';
+  var k,
+      neighbors = [];
+
+  for(k in this.allNeighborsIndex[id]) {
+    neighbors.push(this.nodesIndex[k]);
+  }
+  return neighbors;
+});
+
 
 function searchNodes() {
   var output = [],
@@ -73,20 +87,6 @@ function displayFilterNodeInfo(node) {
   $('#info-pane').show();
   $('#info-exit-btn').show();
 }
-
-// Add a method to the graph model that returns an
-// object with every neighbors of a node inside:
-sigma.classes.graph.addMethod('neighbors', function(id) {
-  if (typeof id !== 'string')
-        throw 'neighbors: the node id must be a string.';
-  var k,
-      neighbors = [];
-
-  for(k in this.allNeighborsIndex[id]) {
-    neighbors.push(this.nodesIndex[k]);
-  }
-  return neighbors;
-});
 
 function resetGraphCanvas() {
   // hide info pane
@@ -164,4 +164,5 @@ $(document).ready(function() {
       s.refresh();
     }
   );
+
 });

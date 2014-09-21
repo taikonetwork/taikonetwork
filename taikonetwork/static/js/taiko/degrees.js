@@ -21,5 +21,4 @@ function validateForm(e) {
 
 $(document).ready(function() {
   $('#degrees-form').on('submit', validateForm);
-
 });

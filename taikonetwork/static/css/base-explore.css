@@ -2,6 +2,11 @@ body {
   padding-top: 70px;
 }
 
+.navbar-default {
+  border-color: #cfcfcf;
+  border-bottom-style: inset;
+}
+
 .dropdown-menu {
   min-width: 0;
 }

@@ -8,6 +8,11 @@ footer {
   color: #777;
 }
 
+.navbar-default {
+  border-color: #cfcfcf;
+  border-bottom-style: inset;
+}
+
 .logo-font {
   font-family: 'Exo 2', sans-serif;
   font-weight: 800;

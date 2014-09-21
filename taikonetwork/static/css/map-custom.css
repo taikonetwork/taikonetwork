@@ -22,3 +22,59 @@
   text-align: center;
   margin-top: 0;
 }
+
+.country {
+  fill: #fff;
+  stroke: #464B46;
+  stroke-width: 0.5px;
+}
+.country:hover{
+  fill: #FFDF00;
+}
+.text{
+  font-family: "Times New Roman", Times, serif;
+  font-size:10px;
+  fill: #1F77B4;
+  text-transform:capitalize;
+}
+#map-container {
+  margin:auto;
+  border:2px solid #000;
+  border-radius: 5px;
+  width: 95%;
+  height:100%;
+  overflow:hidden;
+  background: #EBF5FF;
+}
+.hidden {
+  display: none;
+}
+div.tooltip {
+  color: #000;
+  background: #fff;
+  padding: .5em;
+  text-shadow: #f5f5f5 0 1px 0;
+  border-radius: 2px;
+  box-shadow: 0px 0px 2px 0px #a6a6a6;
+  opacity: 0.9;
+  font-size: 16px;
+  position: absolute;
+}
+.graticule {
+  fill: none;
+  stroke: #bbb;
+  stroke-width: .5px;
+  stroke-opacity: .5;
+}
+.equator {
+  stroke: #ccc;
+  stroke-width: 1px;
+}
+.point {
+  fill: #FF0261;
+  stroke: #000;
+  stroke-width: 0.2px;
+}
+.point:hover {
+  fill: #02FD40;
+}

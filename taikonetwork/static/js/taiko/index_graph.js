@@ -21,6 +21,7 @@ function controlForce(s) {
   }, true);
 }
 
+
 $(document).ready(function() {
   sigma.parsers.json(graphData,
     {
@@ -47,8 +48,9 @@ $(document).ready(function() {
     function(s) {
       s.refresh();
       s.startForceAtlas2();
-  
+
       controlForce(s);
     }
   );
+
 });
