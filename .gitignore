@@ -48,13 +48,15 @@ taikonetwork/static/*
 !taikonetwork/static/js/
 taikonetwork/static/js/*
 !taikonetwork/static/js/taiko/
+taikonetwork/datahandler/tools/data/
 share/
 .*
 !.gitignore
+
 
 # Virtual environment
 pyvenv.cfg
 
 # Auth stuff
 local_settings.py
-salesforce_authentication.py
+api_authentication.py
