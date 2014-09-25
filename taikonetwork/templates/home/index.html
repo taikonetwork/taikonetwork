@@ -28,11 +28,12 @@
     </div>
 {% endblock %}
 
-{% block sigmajs %}
+{% block custom-js %}
     <!-- sigma.js -->
     <script src="{{ STATIC_URL }}js/sigma/sigma.min.js"></script>
     <script src="{{ STATIC_URL }}js/sigma/plugins/sigma.parsers.json.min.js"></script>
     <script src="{{ STATIC_URL }}js/sigma/plugins/sigma.layout.forceAtlas2.min.js"></script>
+    <script src="{{ STATIC_URL }}js/sigma/plugins/sigma.plugins.dragNodes.min.js"></script>
     <script>var graphData = "{{ STATIC_URL }}data/index_graph.json";</script>
     <script src="{{ STATIC_URL }}js/taiko/index_graph.js"></script>
 {% endblock %}

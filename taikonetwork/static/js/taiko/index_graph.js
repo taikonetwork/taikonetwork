@@ -46,6 +46,9 @@ $(document).ready(function() {
       }
     },
     function(s) {
+      sigma.renderers.def = sigma.renderers.canvas
+      sigma.plugins.dragNodes(s, s.renderers[0]);
+
       s.refresh();
       s.startForceAtlas2();
 

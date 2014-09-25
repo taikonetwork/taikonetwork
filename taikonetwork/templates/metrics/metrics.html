@@ -1,0 +1,24 @@
+{% extends "base-explore.html" %}
+
+{% block title %}Taiko Network: Metrics{% endblock %}
+
+{% block navbar-active %}
+            <li><a href="/map/">Map</a></li>
+            <li><a href="/map/groups/">Groups</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Graphs<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="/graphs/network/">Network Graph</a></li>
+                <li><a href="/graphs/demographic/">Demographics Graph</a></li>
+                <li><a href="/graphs/connection/">Degrees of Separation</a></li>
+              </ul>
+            </li>
+            <li class="active"><a href="/metrics/">Metrics</a></li>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h3 style="display:block;margin:200px auto;width:50%">{{ message }}</h3>
+    </div>
+{% endblock %}
+

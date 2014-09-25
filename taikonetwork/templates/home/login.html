@@ -1,0 +1,49 @@
+{% extends "base-index.html" %}
+
+{% block title %}Taiko Network: Login{% endblock %}
+
+{% block navbar-active %}
+          <li class="active"><a href="/login/">
+            <span class="glyphicon glyphicon-user icon-sep"></span>Login</a></li>
+          <li><a href="/about/">
+            <span class="glyphicon glyphicon-info-sign icon-sep"></span>About</a></li>
+{% endblock %}
+
+{% block content %}
+        <div class="container">
+
+          <form class="form-signin" role="form">
+            <h3 class="form-signin-heading">Please sign in:</h3>
+            <input type="email" class="form-control" placeholder="Email address" required autofocus>
+            <input type="password" class="form-control" placeholder="Password" required>
+            <label class="login-checkbox">
+              <input type="checkbox" value="remember-me"> Remember me
+            </label>
+            <button class="btn btn-lg btn-success btn-block" type="submit">Sign in</button>
+          </form>
+
+
+          <div class="narrow-block">
+            <div>
+              <h3 class="title-inline">Not registered? </h3>
+              <button type="button" class="btn btn-primary">Register now</button>
+            </div>
+
+            <div class="register-divider">--- or ---</div>
+
+            <div>
+              <h3 class="title-inline">Retrieve account: </h3>
+              <div class="form-inline" id="find-acct-form">
+                <div class="form-group">
+                  <label class="sr-only" for="acct-email">Enter email address</label>
+                  <input type="email" class="form-control" id="acct-email" placeholder="Enter email address" required autofocus>
+                  <label class="sr-only" for="acct-key">Enter activation key</label>
+                  <input type="password" class="form-control" id="acct-key" placeholder="Enter activation key" required autofocus>
+              </div>
+                <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-search"></i></button>
+              </div>
+            </div>
+          </div> <!-- /register options -->
+
+        </div> <!-- /container -->
+{% endblock %}

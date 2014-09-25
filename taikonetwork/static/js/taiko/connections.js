@@ -1,36 +1,8 @@
-function validateForm(e) {
-  $('#form-error-alert').hide();
+function clearPreviousResult(e) {
   $('#query-error').hide();
   $('#query-success').hide();
   _.$('graph-container').innerHTML = '';
-
-  // Validate form.
-  var error = false;
-  if ($('#firstname1').val()=='') {
-    $('#fg-first1').addClass('has-error');
-    error = true;
-  }
-  if ($('#lastname1').val()=='') {
-    $('#fg-last1').addClass('has-error');
-    error = true;
-  }
-  if ($('#firstname2').val()=='') {
-    $('#fg-first2').addClass('has-error');
-    error = true;
-  }
-  if ($('#lastname2').val()=='') {
-    $('#fg-last2').addClass('has-error');
-    error = true;
-  }
-
-  if (error) {
-    e.preventDefault();
-    $('#form-error-alert').show();
-  } else {
-    // Do nothing and let form submit.
-  }
 }
-
 
 function renderGraph(graph) {
   // Get node indices for links.
@@ -182,5 +154,5 @@ function processQuery() {
 
 
 $(document).ready(function() {
-  $('#connections-form').on('submit', validateForm);
+  $('#connections-form').on('submit', clearPreviousResult);
 });

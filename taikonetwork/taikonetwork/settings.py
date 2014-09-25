@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'home',
     'map',
     'graph',
+    'metrics',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -58,7 +59,7 @@ WSGI_APPLICATION = 'taikonetwork.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-DATABASE_ROUTERS = ['salesforce.router.ModelRouter']
+# DATABASE_ROUTERS = ['salesforce.router.ModelRouter']
 
 DATABASES = {
     'default': {
