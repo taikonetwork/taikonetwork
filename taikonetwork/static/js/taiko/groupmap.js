@@ -19,6 +19,25 @@ $(document).ready(function() {
     draw(topo);
   });
 
+  // Slider to filter groups by year
+  $('#slider').slider({
+    min: 1950,
+    max: 2014,
+    step: 1,
+    value: [1950, 2014],
+    tooltip: 'hide'
+  });
+  $('#year').val(formatYearLabel($('#slider').slider('getValue')));
+  $('#slider').on('slide', function(e) {
+    $('#year').val(formatYearLabel(e.value));
+  });
+
+  function formatYearLabel(range) {
+    if (range[0] == range[1]) {
+      return range[0];
+    }
+    return range[0] + ' - ' + range[1];
+  }
 
   function setup(width,height) {
     projection = d3.geo.mercator()

@@ -78,3 +78,28 @@ div.tooltip {
 .point:hover {
   fill: #02FD40;
 }
+
+#slider-container {
+  margin: auto;
+  width: 90%;
+  height: 100%;
+}
+#slider-element {
+  float: left;
+  padding-bottom: 15px;
+}
+#slider .slider-selection {
+  background: #e7e7e7;
+}
+#slider .slider-handle {
+  background: #428bca;
+}
+#slider-control {
+  padding-left: 15px;
+  padding-right: 10px;
+}
+/*
+.slider.slider-horizontal {
+  width: 100%;
+}
+*/
