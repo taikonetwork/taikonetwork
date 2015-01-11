@@ -22,6 +22,25 @@
 {% endblock %}
 
 {% block content %}
+    <div class="side-canvas">
+      <div id="info-exit-btn">
+          <a href="#" id="exit-click-link" data-toggle="tooltip" title="Return to map">
+              <span class="glyphicon glyphicon-remove-circle info-exit-icon"></span></a>
+      </div>
+
+      <div id="info-pane">
+          <h4 class="underline">Group Information</h4>
+          <div id="info-profile"></div>
+          <span class="line"></span>
+
+          <div>
+            <h5>Members <span id='filter-year'></span>:</h5>
+            <div id="info-members-list"></div>
+          </div>
+
+      </div> <!-- end .info-pane -->
+    </div>
+
     <div id="slider-container">
       <div id="slider-element">
         <div>
@@ -33,6 +52,7 @@
         </div>
       </div>
     </div>
+
     <div id="map-container"></div>
 {% endblock %}
 

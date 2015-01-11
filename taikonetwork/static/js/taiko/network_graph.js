@@ -91,7 +91,7 @@ function displayFilterNodeInfo(node) {
 function resetGraphCanvas() {
   // hide info pane
   _.$('info-profile').innerHTML = '';
-  _.$('info-connections-list').innterHTML = '';
+  _.$('info-connections-list').innerHTML = '';
   $('#info-pane').hide();
   $('#info-exit-btn').hide();
 
@@ -164,5 +164,10 @@ $(document).ready(function() {
       s.refresh();
     }
   );
+
+  $('#exit-click-link').click(function() {
+    resetGraphCanvas();
+    return false;
+  });
 
 });

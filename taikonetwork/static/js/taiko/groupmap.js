@@ -19,6 +19,11 @@ $(document).ready(function() {
     draw(topo);
   });
 
+  $('#exit-click-link').click(function() {
+    resetGroupInfo();
+    return false;
+  });
+
   // Slider to filter groups by year
   $('#slider').slider({
     min: 1950,
@@ -29,8 +34,16 @@ $(document).ready(function() {
   });
   $('#year').val(formatYearLabel($('#slider').slider('getValue')));
   $('#slider').on('slide', function(e) {
-    $('#year').val(formatYearLabel(e.value));
+    var yearRange = e.value;
+    $('#year').val(formatYearLabel(yearRange));
+
+    // Filter points within the slider year range.
+    g.selectAll('.point')
+      .classed('hidden', function(d) {
+        return (d.year < yearRange[0] || d.year > yearRange[1]);
+      });
   });
+
 
   function formatYearLabel(range) {
     if (range[0] == range[1]) {
@@ -148,7 +161,6 @@ $(document).ready(function() {
     console.log(latlon);
   }
 
-
   // Function to add group markers to the map
   function addMarker(lng, lat, text) {
     var gmarker = g.append('g').attr('class', 'gmarker');
@@ -182,13 +194,14 @@ $(document).ready(function() {
           .attr('class', 'point')
           .attr('r', 1)
           .attr('id', function(d) { return d.sf_id; })
-          .attr('title', function(d) { return d.name });
+          .attr('title', function(d) { return d.name })
+          .attr('year', function(d) { return d.year });
 
     // Offsets for tooltips
     var offsetL = _.$('map-container').offsetLeft + 20;
     var offsetT = _.$('map-container').offsetTop + 10;
 
-    // Tooltips (country names)
+    // Tooltips and info pane on mouse event.
     gmarker
       .on('mousemove', function(d,i) {
         var mouse = d3.mouse(svg.node()).map(function(d) { return parseInt(d); });
@@ -199,7 +212,47 @@ $(document).ready(function() {
       })
       .on('mouseout', function(d,i) {
         tooltip.classed('hidden', true);
+      })
+      .on('click', function(d,i) {
+        displayGroupInfo(d);
+        d3.select(this)
+          .classed('info', true);
       });
+  }
+
+  function displayGroupInfo(group) {
+    // Hide/undo previous group info pane and group marker color (if any)
+    resetGroupInfo();
+
+    // Display information of group
+    var infoProfile = _.$('info-profile');
+    infoProfile.innerHTML += '<img src="/static/images/profile.png" alt="Profile Image" id="profile-img" class="img-thumbnail">\n';
+    infoProfile.innerHTML += '<h4>' + group.name + '</h4>\n';
+    infoProfile.innerHTML += '<em>Founding Year: ' + group.year + '</em>\n';
+    infoProfile.innerHTML += '<br />\n<a href="#">ID: ' + group.sf_id + '</a>\n';
+
+    _.$('filter-year').innerHTML = '(' + formatYearLabel($('#slider').slider('getValue')) + ')\n';
+    var infoMembers = _.$('info-members-list');
+    for (i = 0; i < 10; i++) {
+      var start = Math.floor(Math.random() * (2015 - 1950)) + 1950;
+      var end = Math.floor(Math.random() * (2015 - start)) + start;
+      infoMembers.innerHTML += '<li>MemberFirst MemberLast ' + i + '</li>\n';
+      infoMembers.innerHTML += '<ul></li>Active: <em>' + start + ' - ' + end + '</em></li></ul>\n';
+    }
+
+    $('#info-pane').show();
+    $('#info-exit-btn').show();
+  }
+
+  function resetGroupInfo() {
+    // Hide info pane
+    _.$('info-profile').innerHTML = '';
+    _.$('info-members-list').innerHTML = '';
+    $('#info-pane').hide();
+    $('#info-exit-btn').hide();
+
+    // Undo group marker color
+    d3.select('.point.info').classed('info', false);
   }
 
 });

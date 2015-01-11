@@ -78,6 +78,9 @@ div.tooltip {
 .point:hover {
   fill: #02FD40;
 }
+.point.info {
+  fill: #02FD40;
+}
 
 #slider-container {
   margin: auto;
@@ -103,3 +106,64 @@ div.tooltip {
   width: 100%;
 }
 */
+
+.side-canvas {
+  position: relative;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  background: #fff;
+}
+.line {
+  clear: both;
+  display: block;
+  width: 100%;
+  padding: 12px 0 0 0;
+  border-bottom: 1px solid #999;
+  background: transparent;
+}
+h4.underline {
+  color: #333;
+  background: #f0f0f0;
+  margin: 0;
+  border-radius: 2px;
+  padding: 8px 12px;
+  font-weight: 700;
+}
+#info-pane {
+  top: 60px;
+  right: 50px;
+  position: absolute;
+  z-index: 20;
+  width: 240px;
+  background-color: #fbfbfb;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  display: none;
+}
+#info-pane > div {
+  margin: 10px;
+  overflow-x: auto;
+}
+#profile-img {
+  width: 140px;
+  height: 140px;
+}
+#info-profile {
+  text-align: center;
+}
+#info-members-list {
+  max-height: 320px;
+  font-size: 12px;
+}
+#info-exit-btn {
+  display: none;
+}
+.info-exit-icon {
+  position: absolute;
+  top: 50px;
+  right: 276px;
+  z-index: 30;
+  font-size: 2em;
+  background: #f8f8f8;
+  border-radius: 50%;
+}
