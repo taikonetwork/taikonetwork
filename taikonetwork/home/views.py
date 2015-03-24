@@ -1,4 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.views.decorators.csrf import csrf_protect
+
+from map import views
 
 
 def index(request):
@@ -9,8 +13,19 @@ def about(request):
     return render(request, 'home/about.html')
 
 
-def login(request):
-    return render(request, 'home/login.html')
+@csrf_protect
+def login_form(request):
+    username = request.POST.get('username', '')
+    password = request.POST.get('password', '')
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+            return redirect(views.groupmap)
+        else:
+            return redirect(index)
+    else:
+        return redirect(index)
 
 
 def retrieve_account(request):

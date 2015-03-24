@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 from django.core.serializers.json import DjangoJSONEncoder
 
 from py2neo import cypher
@@ -10,16 +11,19 @@ import json
 import string
 
 
+@login_required(login_url='/')
 def network_graph(request):
     return render(request, 'graph/network_graph.html')
 
 
+@login_required(login_url='/')
 def demographic_graph(request):
     config_json = demographic_graph_config()
     return render(request, 'graph/demographic_graph.html',
                   {'config_json': config_json})
 
 
+@login_required(login_url='/')
 def connection_graph(request):
     return render(request, 'graph/connections.html')
 

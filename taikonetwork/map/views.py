@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
 from django.core.serializers.json import DjangoJSONEncoder
 
 from datahandler.models import GroupAlt
@@ -9,6 +10,7 @@ from py2neo import cypher
 from taikonetwork.neo4j_settings import NEO4J_ROOT_URI
 
 
+@login_required(login_url='/')
 def groupmap(request):
     taiko_groups = GroupAlt.objects.filter(accounttype='Taiko Group')
     groups_filtered = []
@@ -30,6 +32,7 @@ def groupmap(request):
                                                  'num_no_loc': num_no_loc})
 
 
+@login_required(login_url='/')
 def grouplist(request):
     taiko_groups = GroupAlt.objects.filter(accounttype='Taiko Group')
     groups_filtered = []
