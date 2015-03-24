@@ -24,16 +24,17 @@ $(document).ready(function() {
     return false;
   });
 
+  var currentYear = new Date().getFullYear();
   // Slider to filter groups by year
-  $('#slider').slider({
+  $('#filterSlider').slider({
     min: 1950,
-    max: 2014,
+    max: currentYear,
     step: 1,
-    value: [1950, 2014],
+    value: [1950, currentYear],
     tooltip: 'hide'
   });
-  $('#year').val(formatYearLabel($('#slider').slider('getValue')));
-  $('#slider').on('slide', function(e) {
+  $('#year').val(formatYearLabel($('#filterSlider').slider('getValue')));
+  $('#filterSlider').on('slide', function(e) {
     var yearRange = e.value;
     $('#year').val(formatYearLabel(yearRange));
 
@@ -226,23 +227,61 @@ $(document).ready(function() {
 
     // Display information of group
     var infoProfile = _.$('info-profile');
-    infoProfile.innerHTML += '<img src="/static/images/profile.png" alt="Profile Image" id="profile-img" class="img-thumbnail">\n';
+    infoProfile.innerHTML += '<img src="/static/images/taiko.png" alt="TaikoNetwork Group" id="profile-img" class="img-circle">\n';
     infoProfile.innerHTML += '<h4>' + group.name + '</h4>\n';
     infoProfile.innerHTML += '<em>Founding Year: ' + group.year + '</em>\n';
     infoProfile.innerHTML += '<br />\n<a href="#">ID: ' + group.sf_id + '</a>\n';
 
-    _.$('filter-year').innerHTML = '(' + formatYearLabel($('#slider').slider('getValue')) + ')\n';
-    var infoMembers = _.$('info-members-list');
+    _.$('filter-year').innerHTML = '(' + formatYearLabel($('#filterSlider').slider('getValue')) + ')\n';
+
+    /*
     for (i = 0; i < 10; i++) {
       var start = Math.floor(Math.random() * (2015 - 1950)) + 1950;
       var end = Math.floor(Math.random() * (2015 - start)) + start;
       infoMembers.innerHTML += '<li>MemberFirst MemberLast ' + i + '</li>\n';
       infoMembers.innerHTML += '<ul></li>Active: <em>' + start + ' - ' + end + '</em></li></ul>\n';
     }
+    */
+
+    queryMembersList(group.name, group.sf_id);
 
     $('#info-pane').show();
     $('#info-exit-btn').show();
   }
+
+  function queryMembersList(group, sf_id) {
+    var years = $('#filterSlider').slider('getValue');
+    var query_params = {'group': group, 'sf_id': sf_id, 'end_year': years[1]};
+
+    $.ajax({
+      url: 'query-members',
+      type: 'GET',
+      data: query_params,
+      success: function(data) {
+        var infoMembers = _.$('info-members-list');
+
+        if (data['status'] == 'error') {
+          infoMembers.innerHTML += '<p><em>Unexpected error encountered while processing request. Please try again at a later time.</em></p>\n';
+        } else {
+          var members = data['members'];
+          var numMembers = members.length;
+
+          if (numMembers > 0) {
+            for (var i = 0; i < numMembers; i++) {
+              infoMembers.innerHTML += '<li>' + members[i]['name'] + '</li>\n';
+              infoMembers.innerHTML += '<ul></li>Active: <em>' + members[i]['active_years'] + '</em></li></ul>\n';
+            }
+          } else {
+            infoMembers.innerHTML += '<p><em>No active members found within the specified year(s).</em></p>\n';
+          }
+        }
+      },
+      failure: function(data) {
+        _.$('info-members-list').innerHTML += '<p><em>Unexpected error encountered while processing request. Please try again at a later time.</em></p>\n';
+      }
+    });
+  }
+
 
   function resetGroupInfo() {
     // Hide info pane
