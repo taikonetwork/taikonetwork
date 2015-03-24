@@ -7,17 +7,22 @@
 {% endblock %}
 
 {% block navbar-active %}
-            <li><a href="/map/">Map</a></li>
-            <li><a href="/map/groups/">Groups</a></li>
+            <li><a href="/map/">
+                <span class="glyphicon glyphicon-globe icon-sep"></span>
+                Map</a></li>
+            <li><a href="/map/groups/">
+                <span class="glyphicon glyphicon-list icon-sep"></span>
+                Groups</a></li>
             <li class="dropdown active">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Graphs<span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  <span class="glyphicon glyphicon-user icon-sep"></span>
+                  Graphs<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
                 <li><a href="/graphs/network/">Network Graph</a></li>
                 <li><a href="/graphs/demographic/">Demographics Graph</a></li>
                 <li class="active"><a href="/graphs/connection/">Degrees of Separation</a></li>
               </ul>
             </li>
-            <li><a href="/metrics/">Metrics</a></li>
 {% endblock %}
 
 {% block content %}
