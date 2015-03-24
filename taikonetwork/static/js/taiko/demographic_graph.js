@@ -178,6 +178,7 @@ $(document).ready(function() {
         maxEdgeSize: 0.5,
         zoomingRatio: 1.3,
         drawLabels: false,
+        enableHovering: false,
         batchEdgesDrawing: true,
         edgeColor: 'default'
       }

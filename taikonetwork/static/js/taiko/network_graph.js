@@ -74,14 +74,14 @@ function displayFilterNodeInfo(node) {
   // Display information of clicked node
   var infoProfile = _.$('info-profile');
   infoProfile.innerHTML = '';
-  infoProfile.innerHTML += '<img src="/static/images/profile.png" alt="Profile Image" id="profile-img" class="img-thumbnail">\n';
+  infoProfile.innerHTML += '<img src="/static/images/taiko.png" alt="TaikoNetwork Node" id="profile-img" style="background-color:' + node.color +'" class="img-circle">\n';
   infoProfile.innerHTML += '<h4>' + node.label + '</h4>\n';
-  infoProfile.innerHTML += '<a href="#">View Profile</a>\n';
+  // infoProfile.innerHTML += '<a href="#">View Profile</a>\n';
 
   var infoConnections = _.$('info-connections-list');
   infoConnections.innerHTML = '';
   neighbors.forEach(function(n) {
-    infoConnections.innerHTML += '<li><a href="#">' + n.label + '</a></li>\n'
+    infoConnections.innerHTML += '<li><a href="javascript:void(0);" onclick="onSearchNode(\''+ n.id +'\')">' + n.label + '</a></li>\n';
   });
 
   $('#info-pane').show();
