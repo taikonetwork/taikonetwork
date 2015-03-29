@@ -1,3 +1,9 @@
+$(document).ready(function() {
+  var pathsData;
+  $('#connections-form').on('submit', clearPreviousResult);
+  $('#path-select').on('click', selectPathToRender);
+});
+
 function clearPreviousResult(e) {
   $('#query-error').hide();
   $('#query-success').hide();
@@ -141,8 +147,23 @@ function processQuery() {
           + data['member2'] + '<span class="icon-sep2"><strong>|</strong></span>'
           + 'Degrees of Separation: ' + data['degrees'] + '</p>';
         $('#query-success').show();
-        var graph = data['graph'];
-        renderGraph(graph);
+
+        pathsData = data['paths'];
+        if (pathsData.length > 1) {
+          _.$('path-select').innerHTML = '<button type="button" class="btn btn-default" disabled>PATHS: </button>\n';
+          for (var i = 0; i < pathsData.length; i++) {
+            if (i == 0) {
+              _.$('path-select').innerHTML += '<button type="button" '
+                + 'class="btn btn-default active" value="'+ i +'">' + (i+1) +'</button>\n';
+            } else {
+              _.$('path-select').innerHTML += '<button type="button" '
+                + 'class="btn btn-default" value="'+ i +'">' + (i+1) +'</button>\n';
+            }
+          }
+          $('#path-select').show();
+        }
+
+        renderGraph(pathsData[0]);
       }
     },
     failure: function(data) {
@@ -152,7 +173,13 @@ function processQuery() {
   });
 }
 
-
-$(document).ready(function() {
-  $('#connections-form').on('submit', clearPreviousResult);
-});
+function selectPathToRender(e) {
+  var btn = e.target;
+  if (btn.value != null) {
+    $(btn).addClass("active").siblings().removeClass("active");
+     _.$('graph-container').innerHTML = '';
+    console.log(btn.value);
+    console.log(pathsData);
+    renderGraph(pathsData[btn.value]);
+  }
+}

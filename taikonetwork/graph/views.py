@@ -36,7 +36,7 @@ def process_query(request):
     last2 = request.GET.get('last2', ' ').title()
 
     result = find_path(first1, last1, first2, last2)
-    response_data['graph'] = result.get('graph', None)
+    response_data['paths'] = result.get('paths', None)
     response_data['member1'] = result.get('member1', None)
     response_data['member2'] = result.get('member2', None)
     response_data['degrees'] = result.get('degrees', None)
@@ -47,7 +47,7 @@ def process_query(request):
 
 
 def find_path(first1, last1, first2, last2):
-    path_str = ("MATCH p=shortestPath( "
+    path_str = ("MATCH p=allShortestPaths( "
                 "(a:Member {{firstname: '{0}', lastname: '{1}'}})"
                 "-[r:CONNECTED_TO*]-"
                 "(b:Member {{firstname: '{2}', lastname: '{3}'}}) ) "
@@ -57,11 +57,12 @@ def find_path(first1, last1, first2, last2):
     results = query_neo4j_db(query)
 
     if results[0]:
-        nodes_json = []
-        edges_json = []
-        for result in results:
-            nodes = result[0].values[0]
-            edges = result[0].values[1]
+        paths = []
+        for result in results[0]:
+            nodes_json = []
+            edges_json = []
+            nodes = result.values[0]
+            edges = result.values[1]
 
             for n in nodes:
                 data = n.get_cached_properties()
@@ -81,9 +82,9 @@ def find_path(first1, last1, first2, last2):
                         'target': data['_b_id'],
                         'label': data['group']}
                 edges_json.append(edge)
+            paths.append({'nodes': nodes_json, 'edges': edges_json})
 
-        graph = {'nodes': nodes_json, 'edges': edges_json}
-        return {'graph': graph,
+        return {'paths': paths,
                 'member1': '{} {}'.format(first1, last1),
                 'member2': '{} {}'.format(first2, last2),
                 'degrees': len(edges_json)}
