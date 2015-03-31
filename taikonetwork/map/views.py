@@ -3,9 +3,10 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.core.serializers.json import DjangoJSONEncoder
 
-from datahandler.models import GroupAlt
 import json
 from datetime import datetime
+
+from datahandler.models import GroupAlt
 from py2neo import cypher
 from taikonetwork.neo4j_settings import NEO4J_ROOT_URI
 

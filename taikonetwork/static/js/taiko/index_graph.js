@@ -1,3 +1,4 @@
+// Start and stop force movement on home graph.
 function controlForce(s) {
   var forceOn = true;
   _.$('force-control').addEventListener('click', function() {
@@ -56,6 +57,7 @@ $(document).ready(function() {
     }
   );
 
+  // Show login form on click.
   $('#exploreLoginModal').on('shown.bs.modal', function() {
     $('#username').focus();
   });

@@ -1,7 +1,8 @@
 """
-neo4j_settings.py
--------------------
-Configurations for remote Neo4j database.
+    taikonetwork.neo4j_settings
+    ----------------------------
+
+    Configurations for remote Neo4j database.
 
 """
 
