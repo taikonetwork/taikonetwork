@@ -24,7 +24,7 @@ function renderGraph(graph) {
 
   var force = d3.layout.force()
       .size([width, height])
-      .charge([-650])
+      .charge([-600])
       .linkDistance([350])
       .on('tick', tick)
       .nodes(graph.nodes)
@@ -138,7 +138,7 @@ function processQuery() {
     type: 'GET',
     data: query_params,
     success: function(data) {
-      if (data['error_msg']) {
+      if (data.hasOwnProperty('error_msg')) {
         _.$('query-error').innerHTML = '<p>' + data['error_msg'] + '</p>'
         $('#query-error').show();
       } else {

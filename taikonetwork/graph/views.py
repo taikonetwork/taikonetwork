@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
 
 import json
@@ -24,18 +25,20 @@ def connection_graph(request):
 
 
 def process_connection_query(request):
-    response_data = {}
     first1 = request.GET.get('first1', ' ').title()
     last1 = request.GET.get('last1', ' ').title()
     first2 = request.GET.get('first2', ' ').title()
     last2 = request.GET.get('last2', ' ').title()
 
-    result = helper.find_shortest_path(first1, last1, first2, last2)
-    response_data['paths'] = result.get('paths', None)
-    response_data['member1'] = result.get('member1', None)
-    response_data['member2'] = result.get('member2', None)
-    response_data['degrees'] = result.get('degrees', None)
-    response_data['error_msg'] = result.get('error_msg', None)
+    cache_key = 'graph_connection:{0}_{1}_{2}_{3}'.format(first1, last1, first2, last2)
+    # Store in cache for 1 week (in seconds).
+    cache_timeout = 604800
 
-    return HttpResponse(json.dumps(response_data),
+    result = cache.get(cache_key)
+    if not result:
+        result = helper.find_shortest_path(first1, last1, first2, last2)
+        if not result.get('error_msg', None):
+            cache.set(cache_key, result, cache_timeout)
+
+    return HttpResponse(json.dumps(result),
                         content_type="application/json")
