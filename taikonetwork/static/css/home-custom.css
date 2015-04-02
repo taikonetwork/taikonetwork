@@ -125,3 +125,7 @@ footer {
 #find-acct-form {
   display: inline;
 }
+.narrow {
+  max-width: 55em;
+  padding-left: 2em;
+}
