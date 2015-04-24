@@ -48,6 +48,7 @@ taikonetwork/static/*
 !taikonetwork/static/js/
 taikonetwork/static/js/*
 !taikonetwork/static/js/taiko/
+taikonetwork/datahandler/migrations/
 taikonetwork/datahandler/tools/data/
 share/
 .*
