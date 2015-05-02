@@ -60,4 +60,4 @@ pyvenv.cfg
 
 # Auth stuff
 local_settings.py
-api_authentication.py
+authentication.py

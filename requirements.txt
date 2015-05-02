@@ -12,6 +12,6 @@ Django==1.7
 django-salesforce==0.5
 gunicorn==18.0
 psycopg2==2.5.3
-py2neo==1.6.4
+py2neo==2.0.6
 setproctitle==1.1.8
 python3-memcached==1.51
