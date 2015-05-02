@@ -138,7 +138,7 @@ LOGGING = {
             'formatter': 'verbose',
         },
         'console': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
         },
@@ -158,6 +158,11 @@ LOGGING = {
             'handlers': ['neo4j', 'console'],
             'level': 'DEBUG',
             'propagate': False,
+        },
+        'test': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propogate': False,
         },
     },
 }
