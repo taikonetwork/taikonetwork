@@ -31,15 +31,15 @@ class Group(models.Model):
                  ('Youth', 'Youth'), ('Buddhist', 'Buddhist'),
                  ('Classes', 'Classes'), ('Post-Collegiate', 'Post-Collegiate'),
                  ('All Women', 'All Women')],
-        blank=True, null=True)
+        blank=True)
     founding_date = models.DateField(blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     website = models.URLField(blank=True, null=True)
-    country = models.CharField(max_length=80, blank=True, null=True)
-    state = models.CharField(max_length=80, blank=True, null=True)
-    city = models.CharField(max_length=40, blank=True, null=True)
-    postalcode = models.CharField(max_length=20, blank=True, null=True)
-    street = models.TextField(blank=True, null=True)
+    country = models.CharField(max_length=80, blank=True)
+    state = models.CharField(max_length=80, blank=True)
+    city = models.CharField(max_length=40, blank=True)
+    postalcode = models.CharField(max_length=20, blank=True)
+    street = models.TextField(blank=True)
     latitude = models.DecimalField(max_digits=18, decimal_places=15,
                                    blank=True, null=True)
     longitude = models.DecimalField(max_digits=18, decimal_places=15,
@@ -60,7 +60,7 @@ class Member(models.Model):
     dob = models.DateField(blank=True, null=True)
     gender = models.CharField(max_length=255,
                               choices=[('Male', 'Male'), ('Female', 'Female')],
-                              blank=True, null=True)
+                              blank=True)
     race = models.CharField(
         max_length=4099,
         choices=[('American Indian or Alaska Native', 'American Indian or Alaska Native'),
@@ -69,7 +69,7 @@ class Member(models.Model):
                  ('Black or African American', 'Black or African American'),
                  ('White or Caucasian', 'White or Caucasian'),
                  ('Hispanic or Latino', 'Hispanic or Latino')],
-        blank=True, null=True)
+        blank=True)
     asian_ethnicity = models.CharField(
         max_length=4099,
         choices=[('Cambodian', 'Cambodian'), ('Chinese', 'Chinese'),
@@ -81,7 +81,7 @@ class Member(models.Model):
                  ('Palestinian', 'Palestinian'), ('Syrian', 'Syrian'),
                  ('Taiwanese', 'Taiwanese'), ('Thai', 'Thai'),
                  ('Vietnamese', 'Vietnamese')],
-        blank=True, null=True)
+        blank=True)
     is_deleted = models.BooleanField(default=False)
     lastmodifieddate = models.DateTimeField(auto_now=True)
 
@@ -98,7 +98,7 @@ class Membership(models.Model):
     status = models.CharField(max_length=255,
                               choices=[('Current', 'Current'),
                                        ('Former', 'Former')],
-                              blank=True, null=True)
+                              blank=True)
     is_primary = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
     lastmodifieddate = models.DateTimeField(auto_now=True)

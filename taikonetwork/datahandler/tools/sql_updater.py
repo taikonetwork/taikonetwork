@@ -12,14 +12,14 @@ import logging
 
 from datahandler.models import (Account, Contact, Affiliation,
                                 Group, Member, Membership, SqlSyncInfo)
-from taikonetwork.api_authentication import GEOCODE_API_KEY
+from taikonetwork.authentication import GEOCODE_API_KEY
 
 
 # Get instance of logger for SqlUpdater.
 logger = logging.getLogger('datahandler.sql_updater')
 
 
-class SqlUpdater():
+class SqlUpdater:
     def __init__(self):
         try:
             self.groupinfo = SqlSyncInfo.objects.get(model_type='Group')
@@ -44,7 +44,7 @@ class SqlUpdater():
         try:
             new_groups = Account.objects.filter(
                 accounttype='Taiko Group',
-                lastmodifieddate__lt=self.groupinfo.lastupdateddate)
+                lastmodifieddate__gt=self.groupinfo.lastupdateddate)
         except DatabaseError as db_error:
             logger.error(db_error)
             return False
@@ -56,14 +56,17 @@ class SqlUpdater():
         for g in new_groups:
             updated_values = {
                 'name': g.name,
-                'category': g.category,
+                'category': self._xstr(g.category),
                 'founding_date': g.founding_date,
                 'email': g.email,
                 'website': g.website,
                 'is_deleted': g.is_deleted
             }
-            address = {'country': g.country, 'state': g.state, 'city': g.city,
-                       'postalcode': g.postalcode, 'street': g.street}
+            address = {'country': self._xstr(g.country),
+                       'state': self._xstr(g.state),
+                       'city': self._xstr(g.city),
+                       'postalcode': self._xstr(g.postalcode),
+                       'street': self._xstr(g.street)}
 
             try:
                 (group, created) = Group.objects.update_or_create(
@@ -107,6 +110,10 @@ class SqlUpdater():
                 group.save()
 
     def get_geocoordinates(self, name, address):
+        """Get geocoordinates.
+            Reference: https://developers.google.com/maps/documentation/geocoding/
+
+        """
         geocode_url = 'https://maps.googleapis.com/maps/api/geocode/json?{address}&key={key}'
         address_str = 'address={street}{city}{state}{postalcode}{country}'
         latitude, longitude = None, None
@@ -159,6 +166,7 @@ class SqlUpdater():
                             continue
 
                     elif data['status'] == 'OVER_QUERY_LIMIT':
+                        # Usage Limits: 2,500 reqs/24hrs or 5 reqs/sec.
                         logger.warning("Geocoding API - Rate-limit Exceeded. "
                                        "Re-trying in 5 seconds...")
                         time.sleep(5)
@@ -190,7 +198,7 @@ class SqlUpdater():
     def update_members(self):
         try:
             new_members = Contact.objects.filter(
-                lastmodifieddate__lt=self.memberinfo.lastupdateddate)
+                lastmodifieddate__gt=self.memberinfo.lastupdateddate)
         except DatabaseError as db_error:
             logger.error(db_error)
             return False
@@ -202,13 +210,13 @@ class SqlUpdater():
         for m in new_members:
             updated_values = {
                 'name': m.name,
-                'firstname': m.name,
-                'lastname': m.name,
+                'firstname': m.firstname,
+                'lastname': m.lastname,
                 'email': m.email_readonly,
                 'dob': m.dob,
-                'gender': m.gender,
-                'race': m.race,
-                'asian_ethnicity': m.asian_ethnicity,
+                'gender': self._xstr(m.gender),
+                'race': self._xstr(m.race),
+                'asian_ethnicity': self._xstr(m.asian_ethnicity),
                 'is_deleted': m.is_deleted
             }
 
@@ -234,7 +242,7 @@ class SqlUpdater():
     def update_memberships(self):
         try:
             new_memberships = Affiliation.objects.filter(
-                lastmodifieddate__lt=self.mshipinfo.lastupdateddate)
+                lastmodifieddate__gt=self.mshipinfo.lastupdateddate)
         except DatabaseError as db_error:
             logger.error(db_error)
             return False
@@ -264,7 +272,7 @@ class SqlUpdater():
                     'member': member,
                     'startdate': startdate,
                     'enddate': s.enddate,
-                    'status': s.status,
+                    'status': self._xstr(s.status),
                     'is_primary': s.is_primary,
                     'is_deleted': s.is_deleted
                 }
@@ -285,3 +293,8 @@ class SqlUpdater():
         logger.info("> [SYNC OK] Membership: ({0}) added, ({1}) updated.".format(
             num_added, num_updated))
         return True
+
+    def _xstr(self, s):
+        if s is None:
+            return ''
+        return str(s)
