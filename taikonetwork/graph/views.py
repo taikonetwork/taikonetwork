@@ -4,7 +4,7 @@ from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
 
 import json
-from graph import helper
+from graph.tools import helper
 
 
 @login_required(login_url='/')

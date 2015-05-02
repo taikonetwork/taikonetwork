@@ -11,8 +11,8 @@ import random
 import json
 import string
 
-from py2neo import cypher
-from taikonetwork.neo4j_settings import NEO4J_ROOT_URI
+from py2neo import authenticate, Graph, GraphError
+from taikonetwork.authentication import Neo4jAuth as neo4j
 
 
 def query_neo4j_db(query):
@@ -22,12 +22,14 @@ def query_neo4j_db(query):
     Keyword arguments:
     query -- the query string for database to execute
     """
-    session = cypher.Session(NEO4J_ROOT_URI)
+    authenticate(neo4j.HOST_PORT, neo4j.USERNAME, neo4j.PASSWORD)
+    graph = Graph(neo4j.REMOTE_URI)
+
     try:
-        tx = session.create_transaction()
+        tx = graph.cypher.begin()
         tx.append(query)
         results = tx.commit()
-    except cypher.TransactionError:
+    except GraphError:
         return []
     else:
         if tx.finished:
@@ -55,39 +57,46 @@ def find_shortest_path(first1, last1, first2, last2):
     query_str = path_str.format(first1, last1, first2, last2)
     results = query_neo4j_db(query_str)
 
-    if results[0]:
-        paths = []
-        # Iterate through list of results and process shortest paths to json.
-        for result in results[0]:
-            nodes_json = []
-            edges_json = []
-            nodes = result.values[0]
-            edges = result.values[1]
+    if results:
+        try:
+            paths = []
+            # Iterate through list of results and process shortest paths to json.
+            for result in results[0]:
+                nodes_json = []
+                edges_json = []
+                nodes = result[0]
+                edges = result[1]
 
-            for n in nodes:
-                data = n.get_cached_properties()
-                color = 0
-                if ((data['firstname'] == first1 and data['lastname'] == last1)
-                        or (data['firstname'] == first2 and data['lastname'] == last2)):
-                    color = 1
+                for n in nodes:
+                    data = n.properties
+                    color = 0
+                    if ((data['firstname'] == first1 and data['lastname'] == last1)
+                            or (data['firstname'] == first2 and data['lastname'] == last2)):
+                        color = 1
 
-                node = {'id': data['sf_id'],
-                        'label': data['firstname'] + ' ' + data['lastname'],
-                        'color': color}
-                nodes_json.append(node)
+                    node = {'id': data['sf_id'],
+                            'label': data['firstname'] + ' ' + data['lastname'],
+                            'color': color}
+                    nodes_json.append(node)
 
-            for e in edges:
-                data = e.get_cached_properties()
-                edge = {'source': data['_a_id'],
-                        'target': data['_b_id'],
-                        'label': data['group']}
-                edges_json.append(edge)
-            paths.append({'nodes': nodes_json, 'edges': edges_json})
+                for e in edges:
+                    data = e.properties
+                    edge = {'source': data['_a_id'],
+                            'target': data['_b_id'],
+                            'label': data['group']}
+                    edges_json.append(edge)
+                paths.append({'nodes': nodes_json, 'edges': edges_json})
 
-        return {'paths': paths,
-                'member1': '{} {}'.format(first1, last1),
-                'member2': '{} {}'.format(first2, last2),
-                'degrees': len(edges_json)}
+            return {'paths': paths,
+                    'member1': '{} {}'.format(first1, last1),
+                    'member2': '{} {}'.format(first2, last2),
+                    'degrees': len(edges_json)}
+        except IndexError:
+            error_msg = ("Error encountered while searching for path "
+                         "connecting <strong>{} {}</strong> and <strong>{} {}"
+                         "</strong>. Please try again at a later time.").format(
+                first1, last1, first2, last2)
+            return {'error_msg': error_msg}
     else:
         error_msg = "No path connecting <strong>{} {}</strong> and <strong>{} {}</strong> was found.".format(
             first1, last1, first2, last2)
