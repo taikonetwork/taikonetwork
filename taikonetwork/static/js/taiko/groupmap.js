@@ -229,10 +229,29 @@ $(document).ready(function() {
     var infoProfile = _.$('info-profile');
     infoProfile.innerHTML += '<img src="/static/images/taiko.png" alt="TaikoNetwork Group" id="profile-img" class="img-circle">\n';
     infoProfile.innerHTML += '<h4>' + group.name + '</h4>\n';
-    infoProfile.innerHTML += '<em>Founding Year: ' + group.year + '</em>\n';
-    infoProfile.innerHTML += '<br />\n<a href="#">ID: ' + group.sf_id + '</a>\n';
+    infoProfile.innerHTML += '<p class="info-margin">Founding Year: <strong>'
+      + group.year + '</strong></p>\n';
+    if (group.info.hasOwnProperty('location')) {
+      infoProfile.innerHTML += '<p class="info-margin"><a href="https://maps.google.com?ll='
+        + group.lat + ',' + group.lng +'" target="_blank">'
+        + group.info['location'] + ' <span class="glyphicon glyphicon-new-window '
+        + 'icon-sep"></span></a></p>\n';
+    }
+    if (group.info.hasOwnProperty('website')) {
+      infoProfile.innerHTML += '<p class="info-margin"><a href="' + group.info['website']
+        + '" target="_blank">Website <span class="glyphicon glyphicon-new-window'
+        + ' icon-sep"></span></a></p>\n';
+    }
 
-    _.$('filter-year').innerHTML = '(' + formatYearLabel($('#filterSlider').slider('getValue')) + ')\n';
+    if (group.year !== '----') {
+      _.$('filter-year').innerHTML = '('
+          + formatYearLabel([group.year, $('#filterSlider').slider('getValue')[1]])
+          + ')\n';
+    } else {
+      _.$('filter-year').innerHTML = '('
+          + formatYearLabel($('#filterSlider').slider('getValue'))
+          + ')\n';
+    }
 
     /*
     for (i = 0; i < 10; i++) {

@@ -151,6 +151,9 @@ h4.underline {
 #info-profile {
   text-align: center;
 }
+.info-margin {
+ margin: 0 0 5px;
+}
 #info-members-list {
   max-height: 320px;
   font-size: 12px;
