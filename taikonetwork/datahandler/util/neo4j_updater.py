@@ -1,5 +1,5 @@
 """
-    datahandler.tools.neo4j_updater
+    datahandler.util.neo4j_updater
     --------------------------------
 
 
@@ -10,7 +10,7 @@ from datetime import datetime
 from datahandler.models import Group, Member, Membership, Neo4jSyncInfo
 from py2neo import authenticate, Graph, GraphError
 from taikonetwork.authentication import Neo4jAuth as neo4j
-from datahandler.tools import neo4j_cypher as cypher
+from datahandler.util import neo4j_cypher as cypher
 
 
 # Get instance of logger for Neo4jUpdater.

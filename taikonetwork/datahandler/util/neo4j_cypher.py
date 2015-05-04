@@ -1,5 +1,5 @@
 """
-    datahandler.tools.neo4j_cypher
+    datahandler.util.neo4j_cypher
     -------------------------------
 
     Cypher query statements for synchronizing Neo4j database.

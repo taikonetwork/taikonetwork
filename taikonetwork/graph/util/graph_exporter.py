@@ -1,15 +1,12 @@
 """
-    graph_exporter.py
-    ---------------
+    graph.util.graph_exporter
+    --------------------------
 
     Pulls graph data from Neo4J database, creates a NetworkX
     graph object, and then writes it to file in specified format.
     *** For querying large graph dataset (entire network). ***
 
 """
-from django.core.serializers.json import DjangoJSONEncoder
-import json
-
 import networkx as nx
 from py2neo import authenticate, Graph
 from taikonetwork.authentication import Neo4jAuth as neo4j
@@ -20,26 +17,27 @@ class GraphExporter:
         authenticate(neo4j.HOST_PORT, neo4j.USERNAME, neo4j.PASSWORD)
         self.neo4j_db = Graph(neo4j.REMOTE_URI)
 
-    def query_taikonetwork_graph(self):
+    def create_taikonetwork_graph(self):
+        print("> Taiko Network Graph: querying all nodes and relationships...")
         self.graph = nx.Graph()
         self._add_group_nodes()
         self._add_memberships()
         self._add_member_nodes()
         self._add_unique_connections()
+        print("> Taiko Network Graph: SUCCESSFULLY CREATED!\n"
+              "> Export to graph file format to save.\n")
 
-    def query_demographic_graph(self):
+    def create_demographic_graph(self):
+        print("> Demographic Graph: querying all Member nodes and Connection rels...")
         self.graph = nx.Graph()
         self._add_member_nodes(demo=True)
         self._add_unique_connections(demo=True)
+        print("> Demographic Graph: SUCCESSFULLY CREATED!\n"
+              "> Export to graph file format to save.\n")
 
     def export_gexf_graph(self, filepath='graph.gexf'):
         nx.write_gexf(self.graph, filepath,
                       encoding='utf-8', prettyprint=True, version='1.2draft')
-
-    def export_json_graph(self, filepath='graph.json'):
-        json_data = nx.readwrite.json_graph.adjacency_data(self.graph)
-        with open(filepath, 'w') as fp:
-            json.dump(json_data, fp, cls=DjangoJSONEncoder)
 
     def _add_group_nodes(self):
         groups = self.neo4j_db.find('Group')

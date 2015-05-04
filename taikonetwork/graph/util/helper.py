@@ -1,6 +1,6 @@
 """
-    graph.helper
-    -------------
+    graph.util.helper
+    -------------------
 
     Define helper methods for querying, creating, and configuring graph.views.
 
