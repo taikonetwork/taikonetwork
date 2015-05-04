@@ -2,6 +2,9 @@
     datahandler.util.neo4j_updater
     --------------------------------
 
+    This module checks for updates to the managed SQL
+    database and synchronizes the Neo4j database with the
+    SQL database.
 
 """
 import logging

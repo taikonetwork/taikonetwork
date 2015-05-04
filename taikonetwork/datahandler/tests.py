@@ -3,7 +3,7 @@ from datetime import date
 import logging
 from py2neo import authenticate, Graph
 from taikonetwork.authentication import Neo4jAuth as neo4j
-from datahandler.tools import neo4j_cypher as cypher
+from datahandler.util import neo4j_cypher as cypher
 
 
 logger = logging.getLogger('test')

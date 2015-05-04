@@ -4,7 +4,7 @@ from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
 
 import json
-from graph.tools import helper
+from graph.util import helper
 
 
 @login_required(login_url='/')
@@ -25,6 +25,7 @@ def connection_graph(request):
 
 
 def process_connection_query(request):
+    """Find shortest path between two specified Members."""
     first1 = request.GET.get('first1', ' ').title()
     last1 = request.GET.get('last1', ' ').title()
     first2 = request.GET.get('first2', ' ').title()

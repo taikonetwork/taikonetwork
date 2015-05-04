@@ -80,6 +80,7 @@ def grouplist(request):
 
 
 def query_members(request):
+    """Query and display list of members for selected Group and years."""
     group_name = request.GET.get('group', '')
     sf_id = request.GET.get('sf_id', '')
     end_year = request.GET.get('end_year', '')

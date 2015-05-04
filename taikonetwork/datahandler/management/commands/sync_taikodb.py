@@ -10,7 +10,7 @@ from django.core.management.base import BaseCommand, CommandError
 from optparse import make_option
 import logging
 
-from datahandler.tools import sql_updater, neo4j_updater
+from datahandler.util import sql_updater, neo4j_updater
 
 
 # Get instance of logger for datahandler management command.

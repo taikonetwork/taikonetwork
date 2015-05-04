@@ -2,6 +2,9 @@
     datahandler.util.sql_updater
     ------------------------------
 
+    This module checks for updates to Salesforce and
+    synchronizes the managed SQL database with the latest
+    Salesforce data.
 
 """
 from django.db import DatabaseError
