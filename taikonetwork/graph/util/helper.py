@@ -26,16 +26,11 @@ def query_neo4j_db(query):
     graph = Graph(neo4j.REMOTE_URI)
 
     try:
-        tx = graph.cypher.begin()
-        tx.append(query)
-        results = tx.commit()
+        results = graph.cypher.execute(query)
     except GraphError:
         return []
     else:
-        if tx.finished:
-            return results
-        else:
-            return []
+        return results
 
 
 def find_shortest_path(first1, last1, first2, last2):
@@ -91,7 +86,7 @@ def find_shortest_path(first1, last1, first2, last2):
                     'member1': '{} {}'.format(first1, last1),
                     'member2': '{} {}'.format(first2, last2),
                     'degrees': len(edges_json)}
-        except IndexError:
+        except:
             error_msg = ("Error encountered while searching for path "
                          "connecting <strong>{} {}</strong> and <strong>{} {}"
                          "</strong>. Please try again at a later time.").format(

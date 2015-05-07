@@ -7,6 +7,8 @@ $(document).ready(function() {
 function clearPreviousResult(e) {
   $('#query-error').hide();
   $('#query-success').hide();
+  _.$('path-select').innerHTML = '';
+  $('#path-select').hide();
   _.$('graph-container').innerHTML = '';
 }
 
@@ -178,8 +180,6 @@ function selectPathToRender(e) {
   if (btn.value != null) {
     $(btn).addClass("active").siblings().removeClass("active");
      _.$('graph-container').innerHTML = '';
-    console.log(btn.value);
-    console.log(pathsData);
     renderGraph(pathsData[btn.value]);
   }
 }
