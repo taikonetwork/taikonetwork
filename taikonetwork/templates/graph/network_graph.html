@@ -44,6 +44,11 @@
                 More about this visualization</a>
         </div>
 
+        <div><a href="#" data-toggle="modal" data-target="#metricsModal">
+                <span class="glyphicon glyphicon-info-sign icon-sep"></span>
+                More about graph metrics</a>
+        </div>
+
         <div>
             <h4>Legend:</h4>
             <div><div class="node" style="background: black;"></div>People, Groups</div>
@@ -83,24 +88,124 @@
       </div> <!-- end .info-pane -->
     </div> <!-- end .jumbotron canvas -->
 
-    <div class="modal fade" id="vizInfoModal" role="dialog" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div id="vizInfoModal" class="modal fade" role="dialog" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span>
                 <span class="sr-only">Close</span></button>
-            <h5 class="modal-title" id="infoModalLabel">About this graph visualization</h5>
+            <h5 class="modal-title" id="infoModalLabel">About: Graph Visualization</h5>
           </div>
           <div class="modal-body">
-               This graph shows connections among members of the Taiko community.
-               The size of a node indicates how many connections it has.
+               This graph shows connections between members of the Taiko community
+               and relationships between Taiko Groups and its respective members.
+               The size of a node indicates how many edges it has.
                You can zoom in to see labels (via scrolling or touchpad),
                hover over a node, or search for a name in the search box.
-               Clicking on a node will display only that node's immediate connections.
+               Clicking on a node will display information about the node and
+               produce a subgraph of only that node's immediate relationships.
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
+
+    <div id="metricsModal" class="modal modal-wide fade" role="dialog" tabindex="-1" aria-labelledby="metricsModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span>
+                <span class="sr-only">Close</span></button>
+            <h5 class="modal-title" id="metricsModalLabel">About: Graph Measures and Metrics</h5>
+          </div>
+          <div class="modal-body">
+            <p>Graph metrics and measures (from network theory, a subset of graph theory)
+            allow us to analyze the social structures of the Taiko Network and to
+            characterize the network in a quantitative manner.</p>
+
+            <p>In our graph, each node is defined by various metrics that specify
+            its importance and role in the Taiko Network.
+            These metrics are defined as follows:</p>
+            <div>
+                <h5>Triadic Closure</h5>
+                <p>
+                Triadic closure is the principle that if two nodes <em>A</em>
+                and <em>C</em> in a network are connected to some common node <em>B</em>,
+                then there is an increased likelihood that a connection will form
+                between <em>A</em> and <em>C</em> at some point in the future.
+                </p>
+
+                <ul>
+                    <li><strong>Number of Triangles:</strong>
+                        <p>A triangle exists when a node is connected to two other
+                        nodes that are also connected to each other. A high density
+                        of triangles indicates that a set of nodes have high cohesion.</p>
+                    </li>
+                    <li><strong>Clustering Coefficient:</strong>
+                        <p>The clustering coefficient of a node quantifies how close the node and its neighbors
+                        are to being a clique. It is defined as the probablity that two randomly selected
+                        neighboring nodes are also connected with each other. This measure is used to determine
+                        whether a network is a "small world" or not.
+                        </p>
+                    </li>
+                 </ul>
+             </div>
+             <div>
+                 <h5>Centrality Measures</h5>
+                 <p>Centrality measures attempt to quantify the importance or
+                 influence of a node in a network by examining the connections
+                 of a node and its distance to other nodes.
+                 Since the terms "importance" and "influence" can have various meanings,
+                 there are several different centrality measures.
+                 In general, the higher a centrality measure is, the more integral
+                 the node is within a network.</p>
+
+                 <ul>
+                     <li><strong>Degree Centrality:</strong>
+                        <p>Degree centrality is defined as the number of
+                        ties (relationships) that a node has (i.e., the number
+                        of edges attached to a node). In the context of a social network,
+                        it is often measure of how active a node is in the network.</p>
+                     </li>
+                     <li><strong>Betweenness Centrality:</strong>
+                        <p>Betweenness centrality is defined as the number of times
+                        a node acts as an intermediary along the shortest path between
+                        two other nodes. It quantifies the control a node has on the
+                        information flow and communication in a network. Rather than
+                        being central to any single clique, nodes with
+                        high betweenness centrality are often part of several
+                        cliques and act as brokers of information and collaboration.
+                     </li>
+                     <li><strong>Closeness Centrality:</strong>
+                        <p>Closeness centrality is a measure of how close
+                        a node is to all other nodes in the network. Nodes with high
+                        closeness centrality are very influential within a network
+                        because they can reach many other nodes in a few steps
+                        (allowing for interaction with more of the other
+                        nodes and quicker access to information).
+                     </li>
+                     <li><strong>Eccentricity Centrality:</strong>
+                        <p>Eccentricity centrality is defined as the largest
+                        geodesic distance (the number of edges in a shortest path)
+                        between a node and any other nodes. It reflects how far a node is from
+                        every other node in the network. Nodes with
+                        high eccentricity centrality tend to have short distances
+                        to all other nodes and can more easily influence other nodes.
+                     </li>
+                     <li><strong>Eigenvector Centrality:</strong>
+                        <p>Eigenvector centrality is a measure of the influence
+                        of a node in a network. It is calculated by assessing how
+                        well connected a node is to the parts of the network with
+                        the greatest connectivity. Nodes with high eigenvector centrality
+                        have many connections to well-connected nodes and are
+                        considered the leaders of the network.
+                     </li>
+                 </ul>
+             </div>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
 {% endblock %}
 
 {% block custom-js %}
