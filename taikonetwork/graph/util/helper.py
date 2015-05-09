@@ -56,7 +56,7 @@ def find_shortest_path(first1, last1, first2, last2):
         try:
             paths = []
             # Iterate through list of results and process shortest paths to json.
-            for result in results[0]:
+            for result in results:
                 nodes_json = []
                 edges_json = []
                 nodes = result[0]

@@ -1,3 +1,5 @@
+// JavaScript for 'Degrees of Separation' visualization.
+
 $(document).ready(function() {
   var pathsData;
   $('#connections-form').on('submit', clearPreviousResult);
@@ -129,10 +131,10 @@ function renderGraph(graph) {
 
 function processQuery() {
   var query_params = {
-    'first1': _.$('firstname1').value,
-    'last1': _.$('lastname1').value,
-    'first2': _.$('firstname2').value,
-    'last2': _.$('lastname2').value,
+    'first1': _.$('firstname1').value.trim(),
+    'last1': _.$('lastname1').value.trim(),
+    'first2': _.$('firstname2').value.trim(),
+    'last2': _.$('lastname2').value.trim(),
   }
 
   $.ajax({
