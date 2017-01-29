@@ -3,34 +3,68 @@
 {% block title %}Taiko Network: Map{% endblock %}
 
 {% block custom-css %}
+    <link href="{{ STATIC_URL }}css/plugins/bootstrap-slider.min.css" rel="stylesheet">
     <link href="{{ STATIC_URL }}css/map-custom.css" rel="stylesheet">
 {% endblock %}
 
 {% block navbar-active %}
-            <li class="active"><a href="/map/">Map</a></li>
-            <li><a href="/map/groups/">Groups</a></li>
+            <li class="active"><a href="/map/">
+                <span class="glyphicon glyphicon-globe icon-sep"></span>
+                Map</a></li>
+            <li><a href="/map/groups/">
+                <span class="glyphicon glyphicon-list icon-sep"></span>
+                Groups</a></li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Graphs<span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  <span class="glyphicon glyphicon-user icon-sep"></span>
+                  Graphs<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
                 <li><a href="/graphs/network/">Network Graph</a></li>
                 <li><a href="/graphs/demographic/">Demographics Graph</a></li>
                 <li><a href="/graphs/connection/">Degrees of Separation</a></li>
               </ul>
             </li>
-            <li><a href="/metrics/">Metrics</a></li>
 {% endblock %}
 
 {% block content %}
-    <div id="container">
+    <div class="side-canvas">
+      <div id="info-exit-btn">
+          <a href="#" id="exit-click-link" data-toggle="tooltip" title="Return to map">
+              <span class="glyphicon glyphicon-remove-circle info-exit-icon"></span></a>
+      </div>
 
+      <div id="info-pane">
+          <h4 class="underline">Group Information</h4>
+          <div id="info-profile"></div>
+          <span class="line"></span>
+
+          <div>
+            <h5>Members <span id='filter-year'></span>:</h5>
+            <div id="info-members-list"></div>
+          </div>
+
+      </div> <!-- end .info-pane -->
     </div>
-    
+
+    <div id="slider-container">
+      <div id="slider-element">
+        <div>
+          <label for="year">Filter by Founding Year : </label>
+          <span id="slider-control">
+            <div id="filterSlider"></div>
+          </span>
+          <input type="text" id="year" readonly style="border:0; color:#ff0261; font-weight:bold;">
+        </div>
+      </div>
+    </div>
+
     <div id="map-container"></div>
 {% endblock %}
 
 {% block custom-js %}
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.1.0/topojson.min.js"></script>
+    <script src="{{ STATIC_URL }}js/plugins/bootstrap-slider.min.js"></script>
     <script>var worldMapData = "{{ STATIC_URL }}data/world-topo-min.json";</script>
     <script>var groups = {{ groups_json | safe }};</script>
     <script src="{{ STATIC_URL }}js/taiko/groupmap.js"></script>

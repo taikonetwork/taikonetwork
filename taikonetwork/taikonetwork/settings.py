@@ -27,7 +27,6 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,6 +39,7 @@ INSTALLED_APPS = (
     'home',
     'map',
     'graph',
+    'metrics',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -59,6 +59,7 @@ WSGI_APPLICATION = 'taikonetwork.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 DATABASE_ROUTERS = ['salesforce.router.ModelRouter']
+SALESFORCE_QUERY_TIMEOUT = 60
 
 DATABASES = {
     'default': {
@@ -103,6 +104,68 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 # Templates
 TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'),)
+
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[%(asctime)s] %(levelname)s (%(module)s:%(lineno)s) %(message)s'
+        },
+        'simple': {
+            'format': '[%(levelname)s] %(message)s'
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/webapps/taiko_django/logs/datahandler.log',
+            'formatter': 'verbose',
+        },
+        'sql': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/webapps/taiko_django/logs/datahandler.sql.log',
+            'formatter': 'verbose',
+        },
+        'neo4j': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/webapps/taiko_django/logs/datahandler.neo4j.log',
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+    },
+    'loggers': {
+        'datahandler': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'datahandler.sql_updater': {
+            'handlers': ['sql', 'console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'datahandler.neo4j_updater': {
+            'handlers': ['neo4j', 'console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'test': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propogate': False,
+        },
+    },
+}
 
 
 # Override sensitive settings information.

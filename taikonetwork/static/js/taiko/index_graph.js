@@ -1,6 +1,7 @@
+// Start and stop force movement on home graph.
 function controlForce(s) {
   var forceOn = true;
-  document.getElementById('force-control').addEventListener('click', function() {
+  _.$('force-control').addEventListener('click', function() {
     if (forceOn) {
       forceOn = false;
       s.stopForceAtlas2();
@@ -8,7 +9,7 @@ function controlForce(s) {
         drawEdges: true
       });
       s.refresh();
-      document.getElementById('force-control').childNodes[0].nodeValue = 'PLAY';
+      _.$('force-control').childNodes[0].nodeValue = 'PLAY';
     } else {
       forceOn = true;
       s.settings({
@@ -16,7 +17,7 @@ function controlForce(s) {
       });
       s.refresh();
       s.startForceAtlas2();
-      document.getElementById('force-control').childNodes[0].nodeValue = 'PAUSE';
+      _.$('force-control').childNodes[0].nodeValue = 'PAUSE';
     }
   }, true);
 }
@@ -27,7 +28,7 @@ $(document).ready(function() {
     {
       container: 'graph-container',
       renderer: {
-        container: document.getElementById('graph-container'),
+        container: _.$('graph-container'),
         type: 'canvas'
       },
       settings: {
@@ -46,11 +47,26 @@ $(document).ready(function() {
       }
     },
     function(s) {
+      sigma.renderers.def = sigma.renderers.canvas
+      sigma.plugins.dragNodes(s, s.renderers[0]);
+
       s.refresh();
       s.startForceAtlas2();
 
       controlForce(s);
     }
   );
+
+  // Show login form on click.
+  $('#exploreLoginModal').on('shown.bs.modal', function() {
+    $('#username').focus();
+  });
+  _.$('explore-btn').addEventListener('click', function() {
+   if (authenticated) {
+    window.location='/map/';
+   } else {
+    $('#exploreLoginModal').modal({show: true});
+   }
+  });
 
 });

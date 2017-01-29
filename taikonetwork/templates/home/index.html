@@ -3,7 +3,9 @@
 {% block title %}Taiko Network{% endblock %}
 
 {% block navbar-active %}
+          <!--
           <li><a href="/login/"><span class="glyphicon glyphicon-user icon-sep"></span>Login</a></li>
+          -->
           <li><a href="/about/"><span class="glyphicon glyphicon-info-sign icon-sep"></span>About</a></li>
 {% endblock %}
 
@@ -24,15 +26,55 @@
 
     <!-- explore button -->
     <div class="btncontainer">
-      <p><a class="btn btn-lg btn-success" href="/map/" role="button">Explore Now</a></p>
+      <div id="explore-btn" class="btn btn-lg btn-success" role="button">Explore Now</div>
     </div>
+
+ <div class="modal fade" id="exploreLoginModal" role="dialog" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span></button>
+        <h3 class="modal-title" id="loginModalLabel">Please Login:</h3>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" action="/login/" method="POST">
+            {% csrf_token %}
+          <div class="form-group">
+            <label for="username" class="col-sm-2 control-label">Username: </label>
+            <div class="col-sm-10">
+              <input type="text" id="username" name="username" class="form-control" required autofocus>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="password" class="col-sm-2 control-label">Password: </label>
+            <div class="col-sm-10">
+              <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-8 col-sm-4">
+              <button class="btn btn-lg btn-success btn-block" type="submit">Login</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+ </div><!-- /.modal -->
 {% endblock %}
 
-{% block sigmajs %}
+{% block custom-js %}
     <!-- sigma.js -->
     <script src="{{ STATIC_URL }}js/sigma/sigma.min.js"></script>
     <script src="{{ STATIC_URL }}js/sigma/plugins/sigma.parsers.json.min.js"></script>
     <script src="{{ STATIC_URL }}js/sigma/plugins/sigma.layout.forceAtlas2.min.js"></script>
+    <script src="{{ STATIC_URL }}js/sigma/plugins/sigma.plugins.dragNodes.min.js"></script>
+    {% if user.is_authenticated %}
+      <script>var authenticated = true;</script>
+    {% else %}
+      <script>var authenticated = false;</script>
+    {% endif %}
     <script>var graphData = "{{ STATIC_URL }}data/index_graph.json";</script>
     <script src="{{ STATIC_URL }}js/taiko/index_graph.js"></script>
 {% endblock %}

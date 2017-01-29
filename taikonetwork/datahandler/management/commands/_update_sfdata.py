@@ -148,6 +148,9 @@ class Command(BaseCommand):
                 else:
                     startyear = 'null'
                     endyear = 'null'
+            elif s.startdate is None and s.enddate is not None:
+                startyear = s.enddate.year
+                endyear = s.enddate.year
             elif s.startdate is not None and s.enddate is None:
                 if s.status == 'Current':
                     startyear = s.startdate.year
@@ -155,10 +158,7 @@ class Command(BaseCommand):
                 else:
                     startyear = s.startdate.year
                     endyear = s.startdate.year
-            elif s.startdate is None and s.enddate is not None:
-                startyear = s.enddate.year
-                endyear = s.enddate.year
-            elif s.startdate is None and s.enddate is not None:
+            elif s.startdate is not None and s.enddate is not None:
                 startyear = s.startdate.year
                 endyear = s.enddate.year
 

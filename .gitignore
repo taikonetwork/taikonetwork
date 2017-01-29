@@ -48,6 +48,7 @@ taikonetwork/static/*
 !taikonetwork/static/js/
 taikonetwork/static/js/*
 !taikonetwork/static/js/taiko/
+taikonetwork/datahandler/migrations/
 taikonetwork/datahandler/tools/data/
 share/
 .*
@@ -59,4 +60,4 @@ pyvenv.cfg
 
 # Auth stuff
 local_settings.py
-api_authentication.py
+authentication.py

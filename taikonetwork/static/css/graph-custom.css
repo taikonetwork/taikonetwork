@@ -152,12 +152,25 @@ h3.underline {
   overflow-x: auto;
 }
 #profile-img {
-  width: 140px;
-  height: 140px;
+  width: 120px;
+  height: 120px;
 }
 #info-profile {
   text-align: center;
 }
+.info-pane-text {
+  text-align: left;
+}
+#metrics-info {
+  display: none;
+}
+.modal.modal-wide .modal-dialog {
+  width: 80%;
+}
+.modal-wide .modal-body {
+  overflow-y: auto;
+}
+
 #info-connections-list {
   max-height: 480px;
 }

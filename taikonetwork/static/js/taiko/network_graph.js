@@ -62,6 +62,15 @@ function onClickNode(e) {
   displayFilterNodeInfo(node);
 }
 
+function toggleMetrics() {
+  var metrics = _.$('metrics-info');
+  if (metrics.style.display == 'block') {
+    metrics.style.display = 'none';
+  } else {
+    metrics.style.display = 'block';
+  }
+}
+
 function displayFilterNodeInfo(node) {
   var neighbors = s.graph.neighbors(node.id);
 
@@ -74,14 +83,25 @@ function displayFilterNodeInfo(node) {
   // Display information of clicked node
   var infoProfile = _.$('info-profile');
   infoProfile.innerHTML = '';
-  infoProfile.innerHTML += '<img src="/static/images/profile.png" alt="Profile Image" id="profile-img" class="img-thumbnail">\n';
-  infoProfile.innerHTML += '<h4>' + node.label + '</h4>\n';
-  infoProfile.innerHTML += '<a href="#">View Profile</a>\n';
+  infoProfile.innerHTML += '<img src="/static/images/taiko.png" alt="TaikoNetwork Node" id="profile-img" style="background-color:' + node.color +'" class="img-circle">\n';
+  infoProfile.innerHTML += '<h3>' + node.label + '</h3>\n';
+  infoProfile.innerHTML += '<a href="javascript:void(0);" onclick="toggleMetrics()">'
+    + '<h4><span class="caret"></span> Metrics <span class="caret"></span></h4></a> \n'
+    + '<div id="metrics-info"><h5>Triadic Closure</h5><ul class="info-pane-text">\n'
+    + '<li>Number of Triangles: <strong>' + node.attributes['Number of triangles'] + '</strong></li>\n'
+    + '<li>Clustering Coefficient: <strong>' + parseFloat(node.attributes['Clustering Coefficient']).toPrecision(3) + '</strong></li></ul>\n'
+    + '<h5>Centrality Measures</h5><ul class="info-pane-text">\n'
+    + '<li>Degree: <strong>' + node.attributes['Degree'] + '</strong></li>\n'
+    + '<li>Closeness: <strong>' + parseFloat(node.attributes['Closeness Centrality']).toPrecision(6) + '</strong></li>\n'
+    + '<li>Betweenness: <strong>' + parseFloat(node.attributes['Betweenness Centrality']).toPrecision(6) + '</strong></li>\n'
+    + '<li>Eccentricity: <strong>' + node.attributes['Eccentricity'] + '</strong></li>\n'
+    + '<li>Eigenvector: <strong>' + parseFloat(node.attributes['Eigenvector Centrality']).toPrecision(6) + '</strong></li>\n'
+    + '</ul></div>\n';
 
   var infoConnections = _.$('info-connections-list');
   infoConnections.innerHTML = '';
   neighbors.forEach(function(n) {
-    infoConnections.innerHTML += '<li><a href="#">' + n.label + '</a></li>\n'
+    infoConnections.innerHTML += '<li><a href="javascript:void(0);" onclick="onSearchNode(\''+ n.id +'\')">' + n.label + '</a></li>\n';
   });
 
   $('#info-pane').show();
@@ -91,7 +111,7 @@ function displayFilterNodeInfo(node) {
 function resetGraphCanvas() {
   // hide info pane
   _.$('info-profile').innerHTML = '';
-  _.$('info-connections-list').innterHTML = '';
+  _.$('info-connections-list').innerHTML = '';
   $('#info-pane').hide();
   $('#info-exit-btn').hide();
 
@@ -164,5 +184,10 @@ $(document).ready(function() {
       s.refresh();
     }
   );
+
+  $('#exit-click-link').click(function() {
+    resetGraphCanvas();
+    return false;
+  });
 
 });

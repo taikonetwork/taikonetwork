@@ -1,36 +1,18 @@
-function validateForm(e) {
-  $('#form-error-alert').hide();
+// JavaScript for 'Degrees of Separation' visualization.
+
+$(document).ready(function() {
+  var pathsData;
+  $('#connections-form').on('submit', clearPreviousResult);
+  $('#path-select').on('click', selectPathToRender);
+});
+
+function clearPreviousResult(e) {
   $('#query-error').hide();
   $('#query-success').hide();
+  _.$('path-select').innerHTML = '';
+  $('#path-select').hide();
   _.$('graph-container').innerHTML = '';
-
-  // Validate form.
-  var error = false;
-  if ($('#firstname1').val()=='') {
-    $('#fg-first1').addClass('has-error');
-    error = true;
-  }
-  if ($('#lastname1').val()=='') {
-    $('#fg-last1').addClass('has-error');
-    error = true;
-  }
-  if ($('#firstname2').val()=='') {
-    $('#fg-first2').addClass('has-error');
-    error = true;
-  }
-  if ($('#lastname2').val()=='') {
-    $('#fg-last2').addClass('has-error');
-    error = true;
-  }
-
-  if (error) {
-    e.preventDefault();
-    $('#form-error-alert').show();
-  } else {
-    // Do nothing and let form submit.
-  }
 }
-
 
 function renderGraph(graph) {
   // Get node indices for links.
@@ -46,7 +28,7 @@ function renderGraph(graph) {
 
   var force = d3.layout.force()
       .size([width, height])
-      .charge([-650])
+      .charge([-600])
       .linkDistance([350])
       .on('tick', tick)
       .nodes(graph.nodes)
@@ -149,10 +131,10 @@ function renderGraph(graph) {
 
 function processQuery() {
   var query_params = {
-    'first1': _.$('firstname1').value,
-    'last1': _.$('lastname1').value,
-    'first2': _.$('firstname2').value,
-    'last2': _.$('lastname2').value,
+    'first1': _.$('firstname1').value.trim(),
+    'last1': _.$('lastname1').value.trim(),
+    'first2': _.$('firstname2').value.trim(),
+    'last2': _.$('lastname2').value.trim(),
   }
 
   $.ajax({
@@ -160,7 +142,7 @@ function processQuery() {
     type: 'GET',
     data: query_params,
     success: function(data) {
-      if (data['error_msg']) {
+      if (data.hasOwnProperty('error_msg')) {
         _.$('query-error').innerHTML = '<p>' + data['error_msg'] + '</p>'
         $('#query-error').show();
       } else {
@@ -169,8 +151,23 @@ function processQuery() {
           + data['member2'] + '<span class="icon-sep2"><strong>|</strong></span>'
           + 'Degrees of Separation: ' + data['degrees'] + '</p>';
         $('#query-success').show();
-        var graph = data['graph'];
-        renderGraph(graph);
+
+        pathsData = data['paths'];
+        if (pathsData.length > 1) {
+          _.$('path-select').innerHTML = '<button type="button" class="btn btn-default" disabled>PATHS: </button>\n';
+          for (var i = 0; i < pathsData.length; i++) {
+            if (i == 0) {
+              _.$('path-select').innerHTML += '<button type="button" '
+                + 'class="btn btn-default active" value="'+ i +'">' + (i+1) +'</button>\n';
+            } else {
+              _.$('path-select').innerHTML += '<button type="button" '
+                + 'class="btn btn-default" value="'+ i +'">' + (i+1) +'</button>\n';
+            }
+          }
+          $('#path-select').show();
+        }
+
+        renderGraph(pathsData[0]);
       }
     },
     failure: function(data) {
@@ -180,7 +177,11 @@ function processQuery() {
   });
 }
 
-
-$(document).ready(function() {
-  $('#connections-form').on('submit', validateForm);
-});
+function selectPathToRender(e) {
+  var btn = e.target;
+  if (btn.value != null) {
+    $(btn).addClass("active").siblings().removeClass("active");
+     _.$('graph-container').innerHTML = '';
+    renderGraph(pathsData[btn.value]);
+  }
+}

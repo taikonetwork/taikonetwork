@@ -7,17 +7,22 @@
 {% endblock %}
 
 {% block navbar-active %}
-            <li><a href="/map/">Map</a></li>
-            <li><a href="/map/groups/">Groups</a></li>
+            <li><a href="/map/">
+                <span class="glyphicon glyphicon-globe icon-sep"></span>
+                Map</a></li>
+            <li><a href="/map/groups/">
+                <span class="glyphicon glyphicon-list icon-sep"></span>
+                Groups</a></li>
             <li class="dropdown active">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Graphs<span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  <span class="glyphicon glyphicon-user icon-sep"></span>
+                  Graphs<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
                 <li><a href="/graphs/network/">Network Graph</a></li>
                 <li><a href="/graphs/demographic/">Demographics Graph</a></li>
                 <li class="active"><a href="/graphs/connection/">Degrees of Separation</a></li>
               </ul>
             </li>
-            <li><a href="/metrics/">Metrics</a></li>
 {% endblock %}
 
 {% block content %}
@@ -35,29 +40,25 @@
 
             <div id="connections-control" class="panel-collapse">
               <div class="panel-body">
-                <div id="form-error-alert" class="alert alert-danger alert-dismissible" role="alert" style="display:none;">
-                  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                  <strong>Error:</strong> All fields are required.
-                </div>
                 <p>Search for a path that connects:</p>
 
                 <form class="form-inline" role="form" id="connections-form" action="javascript:processQuery()" method="GET">
                   <div class="form-group" id="fg-first1">
                     <label class="sr-only" for="firstname1">First Name</label>
-                    <input type="text" class="form-control" id="firstname1" placeholder="First Name" onfocus="clearInput(this.id);">
+                    <input type="text" class="form-control" id="firstname1" placeholder="First Name" required autofocus onfocus="clearInput(this.id);">
                   </div>
                   <div class="form-group" id="fg-last1">
                     <label class="sr-only" for="lastname1">Last Name</label>
-                    <input type="text" class="form-control" id="lastname1" placeholder="Last Name" onfocus="clearInput(this.id);">
+                    <input type="text" class="form-control" id="lastname1" placeholder="Last Name" required autofocus onfocus="clearInput(this.id);">
                   </div>
                   <p class="control-text-spacing">and</p>
                   <div class="form-group" id="fg-first2">
                     <label class="sr-only" for="firstname2">First Name</label>
-                    <input type="text" class="form-control" id="firstname2" placeholder="First Name" onfocus="clearInput(this.id);">
+                    <input type="text" class="form-control" id="firstname2" placeholder="First Name" required autofocus onfocus="clearInput(this.id);">
                   </div>
                   <div class="form-group" id="fg-last2">
                     <label class="sr-only" for="lastname2">Last Name</label>
-                    <input type="text" class="form-control" id="lastname2" placeholder="Last Name" onfocus="clearInput(this.id);"> .
+                    <input type="text" class="form-control" id="lastname2" placeholder="Last Name" required autofocus onfocus="clearInput(this.id);"> .
                   </div>
                   <br>
                   <div class="graph-control-btn">
@@ -79,9 +80,12 @@
           </div> <!-- end .panel -->
         </div> <!-- end .panel-group #accordion -->
 
-        <div id="query-error" class="alert alert-danger message" role="alert" style="display:none;">
-        </div>
-        <div id="query-success" class="alert alert-info message" role="alert" style="display:none;">
+        <div id="query-error" class="alert alert-danger message" role="alert" style="display:none;"></div>
+        <div id="query-success" class="alert alert-info message" role="alert" style="display:none;"></div>
+
+        <div class="text-center">
+          <!--List of paths -->
+          <div id="path-select" class="btn-group" style="display:none;"></div>
         </div>
 
       </div><!-- end .container -->
